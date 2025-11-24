@@ -1,0 +1,40 @@
+/* Custom styles for the Inter font and a sleek, dark aesthetic */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0c0d12; /* Deep space dark background */
+    color: #e2e8f0; /* Light silver text */
+    line-height: 1.6;
+}
+/* Primary accent color (Cyber Blue) */
+.accent-color {
+    color: #3b82f6; 
+}
+/* Card styling with subtle hover and shadow */
+.fix-card {
+    background-color: #1a1c23; /* Slightly lighter card background */
+    border: 1px solid #2d313a;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.fix-card:hover {
+    border-color: #3b82f6; /* Accent border on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.1);
+}
+/* Completed card styling (Bright Green) */
+.fix-card.completed {
+    border-color: #10b981; /* Green border for completion */
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+/* Alert box for warnings */
+.warning-box {
+    background-color: #1f140e; /* Dark orange/red background */
+    border: 1px solid #f97316;
+    color: #f97316;
+}
+/* Custom list style */
+.custom-list li::marker {
+    content: counter(list-item) ". ";
+    font-weight: bold;
+    color: #3b82f6;
+}
