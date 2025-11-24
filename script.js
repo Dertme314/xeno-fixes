@@ -31,6 +31,7 @@ window.toggleFixStatus = (fixId) => {
 
 /**
  * Updates the visual appearance of a fix card based on its status.
+ * This function also handles applying/removing the Tailwind background classes.
  * @param {string} fixId - The ID of the fix.
  * @param {boolean} isCompleted - The new completion status.
  */
@@ -42,39 +43,36 @@ const updateUI = (fixId, isCompleted) => {
 
     const markButton = trackerContainer.querySelector('.mark-button');
 
+    // Utility classes used for state management
+    const blueClasses = ['bg-blue-600', 'hover:bg-blue-700'];
+    const greenClasses = ['bg-green-600', 'hover:bg-green-700'];
+    const sharedClasses = ['text-white']; // text-white is constant
+
     if (isCompleted) {
         card.classList.add('completed');
         markButton.textContent = 'Status: FIXED! (Click to Reset)';
-        markButton.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'text-white');
-        markButton.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white');
+        
+        // Remove blue classes and add green classes
+        markButton.classList.remove(...blueClasses);
+        markButton.classList.add(...greenClasses, ...sharedClasses);
     } else {
         card.classList.remove('completed');
         markButton.textContent = 'Mark as Fixed';
-        markButton.classList.remove('bg-green-600', 'hover:bg-green-700', 'text-white');
-        markButton.classList.add('bg-blue-600', 'hover:bg-blue-700', 'text-white');
+        
+        // Remove green classes and add blue classes
+        markButton.classList.remove(...greenClasses);
+        markButton.classList.add(...blueClasses, ...sharedClasses);
     }
 };
 
 /**
- * Initial load function to apply statuses saved in localStorage.
+ * Initial load function to apply statuses saved in localStorage AND set the initial button colors.
  */
 const initializeGuide = () => {
     const initialStatuses = loadFixStatuses();
     FIX_KEYS.forEach(key => {
+        // Update the UI based on saved status (applies 'completed' class and button color/text)
         updateUI(key, initialStatuses[key]);
-    });
-    // Apply default button styling on load, regardless of status
-    FIX_KEYS.forEach(key => {
-        const card = document.getElementById(key);
-        const isCompleted = card.classList.contains('completed');
-        const button = document.querySelector(`#tracker-${key} .mark-button`);
-        if (button) {
-            if (isCompleted) {
-                button.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white');
-            } else {
-                button.classList.add('bg-blue-600', 'hover:bg-blue-700', 'text-white');
-            }
-        }
     });
 };
 
