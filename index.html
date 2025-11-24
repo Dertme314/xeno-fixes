@@ -11,35 +11,47 @@
         body {
             /* Pure black background */
             background-color: #000000;
+            /* Subtle background gradient to enhance glassmorphism */
+            background-image: radial-gradient(circle at 50% 0%, #111111 0%, #000000 60%);
+            background-attachment: fixed;
             color: #f3f4f6; /* Light grey/white text for contrast */
             line-height: 1.6;
             font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         }
+
         /* Primary text/heading color */
         .accent-color {
             color: #ffffff; 
         }
-        /* Card styling with subtle dark grey background and minimal border */
+
+        /* Card styling with Glassmorphism */
         .fix-card {
-            background-color: #0d0d0d; /* Very dark grey card background */
+            background-color: rgba(13, 13, 13, 0.85); /* Semi-transparent very dark grey */
+            backdrop-filter: blur(8px); /* Blur effect for what's behind */
+            -webkit-backdrop-filter: blur(8px); /* Safari support */
             border: 1px solid #1a1a1a; /* Extremely subtle dark border */
-            transition: all 0.2s ease-in-out;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
+
         .fix-card:hover {
-            border-color: #333333; /* Slightly visible border on hover */
-            transform: translateY(-1px);
+            border-color: #4b5563; /* Lighter grey for better visibility */
+            transform: translateY(-4px); /* Noticeable lift */
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.8); /* Deep shadow */
         }
+
         /* Completed card styling - kept for functionality */
         .fix-card.completed {
             border-color: #10b981;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); /* Subtle green glow */
         }
+
         /* Warning box styling */
         .warning-box {
-            background-color: #1f0b0b; 
+            background-color: rgba(31, 11, 11, 0.9); 
             border: 1px solid #ef4444; 
             color: #fca5a5; 
         }
+
         /* Style for the action buttons */
         .action-button {
             padding: 8px 16px;
@@ -48,21 +60,34 @@
             font-size: 0.875rem; /* text-sm */
             transition: background-color 0.2s;
         }
+
+        /* Deep Link Pulse Animation */
+        @keyframes pulse-highlight {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); border-color: #6366f1; }
+            70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); border-color: #6366f1; }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); border-color: #1a1a1a; }
+        }
+        
+        .target-highlight {
+            animation: pulse-highlight 2s ease-in-out;
+        }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body class="p-4 md:p-10 min-h-screen">
 
     <div class="max-w-7xl mx-auto">
         
         <!-- TOP RIGHT BUTTONS SECTION -->
-        <div class="flex justify-end space-x-4 mb-8">
-            <!-- Discord Button -->
-            <a href="https://discord.gg/xe-no" target="_blank" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="mr-2"><path d="M22 6.924c-1.638-.975-3.665-1.574-5.83-1.688a.5.5 0 0 0-.44.272l-.12.33c-1.35 3.844-3.1 7.276-5.815 7.276-2.715 0-4.465-3.432-5.815-7.276l-.12-.33a.5.5 0 0 0-.44-.272C5.665 5.35 3.638 5.95 2 6.924v-.004c1.15.545 2.228 1.258 3.12 2.112C4.195 9.878 3.328 11.232 2.76 12.766a.5.5 0 0 0 .195.53C3.626 13.91 4.5 15.352 5 17.1a.5.5 0 0 0 .53.39c1.693-.15 3.32-.4 4.86-.718a.5.5 0 0 0 .54-.037c1.32-1.07 2.64-1.07 3.96 0a.5.5 0 0 0 .54.037c1.54.318 3.167.568 4.86.718a.5.5 0 0 0 .53-.39c.5-.8 1.374-2.242 2.045-3.474a.5.5 0 0 0 .195-.53c-.568-1.534-1.435-2.888-2.55-3.884.892-.854 1.97-1.567 3.12-2.112zM8.5 13.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+        <div class="flex flex-col md:flex-row justify-end space-y-3 md:space-y-0 md:space-x-4 mb-8">
+            <!-- Discord Button (Icon Fixed) -->
+            <a href="https://discord.gg/xe-no" target="_blank" rel="noopener noreferrer" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center md:justify-start">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 127.14 96.36" fill="currentColor" class="mr-2">
+                    <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.11,77.11,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22c1.24-23.28-3.28-47.54-18.9-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5.18-12.74,11.54-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+                </svg>
                 Discord
             </a>
             <!-- Website Button (xeno.onl) -->
-            <a href="https://xeno.onl" target="_blank" class="action-button bg-blue-600 hover:bg-blue-700 text-white flex items-center">
+            <a href="https://xeno.onl" target="_blank" rel="noopener noreferrer" class="action-button bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center md:justify-start">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 Website
             </a>
@@ -87,25 +112,33 @@
         <!-- Main Fixes Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16" id="fixes-grid">
 
-            <!-- FIX 1: Missing Prerequisites -->
-            <div id="fix-1" class="fix-card p-6 rounded-lg">
-                <div class="flex items-start mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3f4f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mt-1 mr-3 text-white"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <div>
-                        <h2 class="text-xl font-bold accent-color mb-1">Xeno not opening</h2> 
-                        <p class="text-sm text-gray-400">You do not have the required dependencies downloaded.</p>
+            <!-- FIX 1: Missing Prerequisites (Added Copy Buttons) -->
+            <div id="fix-1" class="fix-card p-6 rounded-lg flex flex-col justify-between">
+                <div>
+                    <div class="flex items-start mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3f4f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mt-1 mr-3 text-white"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <div>
+                            <h2 class="text-xl font-bold accent-color mb-1">Xeno not opening</h2> 
+                            <p class="text-sm text-gray-400">You do not have the required dependencies downloaded.</p>
+                        </div>
                     </div>
+                    
+                    <p class="text-gray-300 mb-4">Download Microsoft Webview2 and .NET Runtime 8.0.0</p>
+                    <ul class="space-y-3 text-gray-400 list-disc list-inside pl-3">
+                        <li class="flex flex-wrap items-center group">
+                            <a href="https://go.microsoft.com/fwlink/?linkid=2124701" target="_blank" rel="noopener noreferrer" class="font-medium text-blue-400 hover:text-blue-300 ml-2">Microsoft Webview2</a>
+                            <button onclick="copyToClipboard('https://go.microsoft.com/fwlink/?linkid=2124701', this)" class="inline-flex items-center justify-center p-1 rounded hover:bg-white/10 text-gray-500 hover:text-white transition-colors ml-2" title="Copy Link" aria-label="Copy link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-icon"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
+                        </li>
+                        <li class="flex flex-wrap items-center group">
+                            <a href="https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.10-windows-x64-installer" target="_blank" rel="noopener noreferrer" class="font-medium text-blue-400 hover:text-blue-300 ml-2">.NET Runtime 8.0.0</a>
+                            <button onclick="copyToClipboard('https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.10-windows-x64-installer', this)" class="inline-flex items-center justify-center p-1 rounded hover:bg-white/10 text-gray-500 hover:text-white transition-colors ml-2" title="Copy Link" aria-label="Copy link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-icon"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
+                        </li>
+                    </ul>
                 </div>
-                
-                <p class="text-gray-300 mb-4">Download Microsoft Webview2 and .NET Runtime 8.0.0</p>
-                <ul class="space-y-2 text-gray-400 list-disc list-inside pl-3">
-                    <li class="flex items-center">
-                        <a href="https://go.microsoft.com/fwlink/?linkid=2124701" target="_blank" class="font-medium text-blue-400 hover:text-blue-300 ml-2">Microsoft Webview2</a>
-                    </li>
-                    <li class="flex items-center">
-                        <a href="https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.10-windows-x64-installer" target="_blank" class="font-medium text-blue-400 hover:text-blue-300 ml-2">.NET Runtime 8.0.0</a>
-                    </li>
-                </ul>
                 
                 <div class="mt-6 pt-4 border-t border-gray-800 flex justify-end items-center" id="tracker-fix-1">
                     <button onclick="toggleFixStatus('fix-1')" class="px-5 py-2 text-sm rounded-full transition duration-200 font-semibold mark-button">
@@ -114,25 +147,30 @@
                 </div>
             </div>
 
-            <!-- FIX 2: Failed to Attach Error (Hyperlinked C++ Redistributable) -->
-            <div id="fix-2" class="fix-card p-6 rounded-lg">
-                <div class="flex items-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M15 9l-4 4-2-2"/></svg>
-                    <h2 class="text-xl font-bold accent-color">"Failed to Attach" Error</h2>
+            <!-- FIX 2: Failed to Attach Error (Added Copy Button) -->
+            <div id="fix-2" class="fix-card p-6 rounded-lg flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M15 9l-4 4-2-2"/></svg>
+                        <h2 class="text-xl font-bold accent-color">"Failed to Attach" Error</h2>
+                    </div>
+                    <p class="text-gray-400 mb-4">Security software interference or missing C++ dependencies.</p>
+                    
+                    <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
+                        <li class="flex flex-wrap items-center group">
+                            <span>Install <b><a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">Visual C++ Redist. (x64)</a></b></span>
+                            <button onclick="copyToClipboard('https://aka.ms/vs/17/release/vc_redist.x64.exe', this)" class="inline-flex items-center justify-center p-1 rounded hover:bg-white/10 text-gray-500 hover:text-white transition-colors ml-2" title="Copy Link" aria-label="Copy link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-icon"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
+                        </li>
+                        <li class="text-gray-400 font-bold">
+                            Add the Xeno folder to your antivirus exclusions.
+                        </li>
+                        <li>
+                            Ensure both Xeno and Roblox are fully closed before running Xeno.
+                        </li>
+                    </ul>
                 </div>
-                <p class="text-gray-400 mb-4">Security software interference or missing C++ dependencies.</p>
-                
-                <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
-                    <li>
-                        Install <b><a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank" class="text-blue-400 hover:text-blue-300 underline">Visual C++ Redistributable (x64)</a></b>.
-                    </li>
-                    <li class="text-gray-400 font-bold">
-                        Add the Xeno folder to your antivirus exclusions.
-                    </li>
-                    <li>
-                        Ensure both Xeno and Roblox are fully closed before running Xeno.
-                    </li>
-                </ul>
                 
                 <div class="mt-6 pt-4 border-t border-gray-800 flex justify-end items-center" id="tracker-fix-2">
                     <button onclick="toggleFixStatus('fix-2')" class="px-5 py-2 text-sm rounded-full transition duration-200 font-semibold mark-button">
@@ -141,25 +179,30 @@
                 </div>
             </div>
 
-            <!-- FIX 3: Version Mismatch Error (Roblox Downgrader hyperlinked) -->
-            <div id="fix-3" class="fix-card p-6 rounded-lg">
-                <div class="flex items-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    <h2 class="text-xl font-bold accent-color">Version Mismatch / Crash</h2>
+            <!-- FIX 3: Version Mismatch Error (Existing Copy Button) -->
+            <div id="fix-3" class="fix-card p-6 rounded-lg flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <h2 class="text-xl font-bold accent-color">Version Mismatch / Crash</h2>
+                    </div>
+                    <p class="text-gray-400 mb-4">Roblox recently updated. Xeno requires specific client versions.</p>
+                    
+                    <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
+                        <li class="flex flex-wrap items-center group">
+                            <span class="mr-2">Download: <b><a href="https://rdd.weao.gg" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">Roblox Downgrader</a></b></span>
+                            <button onclick="copyToClipboard('https://rdd.weao.gg', this)" class="inline-flex items-center justify-center p-1 rounded hover:bg-white/10 text-gray-500 hover:text-white transition-colors" title="Copy Link" aria-label="Copy link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-icon"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
+                        </li>
+                        <li>
+                            Run the utility to install the <b>last compatible version</b>.
+                        </li>
+                        <li class="font-semibold">
+                            Launch the downgraded Robloxplayerbeta.exe via the folder you installed.
+                        </li>
+                    </ul>
                 </div>
-                <p class="text-gray-400 mb-4">Roblox recently updated. Xeno requires specific client versions.</p>
-                
-                <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
-                    <li>
-                        Download the <b><a href="https://rdd.weao.gg" target="_blank" class="text-blue-400 hover:text-blue-300 underline">Roblox Downgrader/installer</a></b> utility.
-                    </li>
-                    <li>
-                        Run the utility to install the <b>last compatible version</b>.
-                    </li>
-                    <li class="font-semibold">
-                        Launch the downgraded Robloxplayerbeta.exe via the folder you installed.
-                    </li>
-                </ul>
                 
                 <div class="mt-6 pt-4 border-t border-gray-800 flex justify-end items-center" id="tracker-fix-3">
                     <button onclick="toggleFixStatus('fix-3')" class="px-5 py-2 text-sm rounded-full transition duration-200 font-semibold mark-button">
@@ -169,24 +212,26 @@
             </div>
             
             <!-- FIX 4: JSON Parsing Error -->
-            <div id="fix-4" class="fix-card p-6 rounded-lg">
-                <div class="flex items-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                    <h2 class="text-xl font-bold accent-color">"Error Parsing Clients JSON"</h2>
+            <div id="fix-4" class="fix-card p-6 rounded-lg flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        <h2 class="text-xl font-bold accent-color">"Error Parsing Clients JSON"</h2>
+                    </div>
+                    <p class="text-gray-400 mb-4">A critical internal configuration file is corrupted or outdated.</p>
+                    
+                    <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
+                        <li class="font-bold">
+                            Completely <b>delete the ENTIRE Xeno installation folder</b>.
+                        </li>
+                        <li>
+                            <b>Download a fresh copy</b> of Xeno from the official source.
+                        </li>
+                        <li class="font-semibold">
+                            Extract and run the fresh copy.
+                        </li>
+                    </ul>
                 </div>
-                <p class="text-gray-400 mb-4">A critical internal configuration file is corrupted or outdated.</p>
-                
-                <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
-                    <li class="font-bold">
-                        Completely <b>delete the ENTIRE Xeno installation folder</b>.
-                    </li>
-                    <li>
-                        <b>Download a fresh copy</b> of Xeno from the official source.
-                    </li>
-                    <li class="font-semibold">
-                        Extract and run the fresh copy.
-                    </li>
-                </ul>
                 
                 <div class="mt-6 pt-4 border-t border-gray-800 flex justify-end items-center" id="tracker-fix-4">
                     <button onclick="toggleFixStatus('fix-4')" class="px-5 py-2 text-sm rounded-full transition duration-200 font-semibold mark-button">
@@ -195,27 +240,36 @@
                 </div>
             </div>
 
-            <!-- FIX 5: Website Access -->
-            <div id="fix-5" class="fix-card p-6 rounded-lg">
-                <div class="flex items-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                    <h2 class="text-xl font-bold accent-color">Official Site Blocked/Down</h2>
+            <!-- FIX 5: Website Access (Added 2 Copy Buttons) -->
+            <div id="fix-5" class="fix-card p-6 rounded-lg flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        <h2 class="text-xl font-bold accent-color">Official Site Blocked/Down</h2>
+                    </div>
+                    <p class="text-gray-400 mb-4">If you cannot reach the main download source due to ISP or network blocks.</p>
+                    
+                    <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
+                        <li class="flex flex-wrap items-center group">
+                            <span class="mr-2"><b>Mirror:</b> <a href="https://x3no.pages.dev" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">x3no.pages.dev</a></span>
+                            <button onclick="copyToClipboard('https://x3no.pages.dev', this)" class="inline-flex items-center justify-center p-1 rounded hover:bg-white/10 text-gray-500 hover:text-white transition-colors" title="Copy Link" aria-label="Copy link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-icon"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
+                        </li>
+                        <li class="flex flex-wrap items-center group">
+                            <span class="mr-2"><b>Web Proxy:</b> <a href="https://www.proxyium.com/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">Proxyium</a></span>
+                            <button onclick="copyToClipboard('https://www.proxyium.com/', this)" class="inline-flex items-center justify-center p-1 rounded hover:bg-white/10 text-gray-500 hover:text-white transition-colors" title="Copy Link" aria-label="Copy link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-icon"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
+                        </li>
+                        <li class="flex flex-wrap items-center group">
+                            <span class="mr-2"><b>Try Free VPN:</b> <a href="https://protonvpn.com/free-vpn/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">Proton VPN</a></span>
+                            <button onclick="copyToClipboard('https://protonvpn.com/free-vpn/', this)" class="inline-flex items-center justify-center p-1 rounded hover:bg-white/10 text-gray-500 hover:text-white transition-colors" title="Copy Link" aria-label="Copy link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-icon"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
+                        </li>
+                    </ul>
                 </div>
-                <p class="text-gray-400 mb-4">If you cannot reach the main download source due to ISP or network blocks.</p>
-                
-                <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
-                    <li>
-                        <b>Use the Official Mirror:</b> <a href="https://x3no.pages.dev" target="_blank" class="text-blue-400 hover:text-blue-300 underline">x3no.pages.dev</a>
-                    </li>
-                    <li>
-                        <b>Use a Web Proxy (Proxyium):</b> Access the official site via a proxy if it's blocked.
-                        <a href="https://www.proxyium.com/" target="_blank" class="text-blue-400 hover:text-blue-300 underline">(Go to Proxyium)</a>
-                    </li>
-                    <li>
-                        <b>Try a Free VPN:</b> Use Proton VPN to bypass geo-blocks.
-                        <a href="https://protonvpn.com/free-vpn/" target="_blank" class="text-blue-400 hover:text-blue-300 underline">(Get Proton VPN)</a>
-                    </li>
-                </ul>
                 
                 <div class="mt-6 pt-4 border-t border-gray-800 flex justify-end items-center" id="tracker-fix-5">
                     <button onclick="toggleFixStatus('fix-5')" class="px-5 py-2 text-sm rounded-full transition duration-200 font-semibold mark-button">
@@ -224,23 +278,28 @@
                 </div>
             </div>
             
-            <!-- FIX 6: Need Scripts -->
-            <div id="fix-6" class="fix-card p-6 rounded-lg">
-                <div class="flex items-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
-                    <h2 class="text-xl font-bold accent-color">Need Scripts?</h2>
+            <!-- FIX 6: Need Scripts (Updated Link Text + Added Copy Button) -->
+            <div id="fix-6" class="fix-card p-6 rounded-lg flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
+                        <h2 class="text-xl font-bold accent-color">Need Scripts?</h2>
+                    </div>
+                    <p class="text-gray-400 mb-4">Finding reliable and current scripts for your game session.</p>
+                    
+                    <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
+                        <li class="flex flex-wrap items-center group">
+                            <span class="mr-2">Visit <b><a href="https://scriptblox.com" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">ScriptBlox</a></b> for community scripts.</span>
+                             <!-- Copy Button -->
+                             <button onclick="copyToClipboard('https://scriptblox.com', this)" class="inline-flex items-center justify-center p-1 rounded hover:bg-white/10 text-gray-500 hover:text-white transition-colors" title="Copy Link" aria-label="Copy link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-icon"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </button>
+                        </li>
+                        <li class="text-red-400 font-bold pt-1">
+                            ⚠️ WARNING: Only use highly-rated and trusted community scripts.
+                        </li>
+                    </ul>
                 </div>
-                <p class="text-gray-400 mb-4">Finding reliable and current scripts for your game session.</p>
-                
-                <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
-                    <li>
-                        Visit <b>ScriptBlox</b> to find the latest, safest community scripts.
-                        <a href="https://scriptblox.com" target="_blank" class="text-blue-400 hover:text-blue-300 underline">(Go to ScriptBlox)</a>
-                    </li>
-                    <li class="text-red-400 font-bold pt-1">
-                        ⚠️ WARNING: Only use highly-rated and trusted community scripts to avoid broken or malicious code.
-                    </li>
-                </ul>
                 
                 <div class="mt-6 pt-4 border-t border-gray-800 flex justify-end items-center" id="tracker-fix-6">
                     <button onclick="toggleFixStatus('fix-6')" class="px-5 py-2 text-sm rounded-full transition duration-200 font-semibold mark-button">
@@ -273,13 +332,13 @@
             <p class="mb-2">Guide powered by Xeno community knowledge.</p>
             <p>
                 Need more help? Join our Discord: 
-                <a href="https://discord.gg/xe-no" target="_blank" class="text-blue-400 hover:text-blue-300 font-semibold underline">.gg/xe-no</a>
+                <a href="https://discord.gg/xe-no" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 font-semibold underline">.gg/xe-no</a>
             </p>
         </footer>
 
     </div>
 
-    <!-- JavaScript for Status Tracker (Unchanged for functionality) -->
+    <!-- JavaScript for Status Tracker and Enhancements -->
     <script>
         // --- LOCAL STORAGE DATA HANDLING ---
         const FIX_KEYS = ['fix-1', 'fix-2', 'fix-3', 'fix-4', 'fix-5', 'fix-6'];
@@ -334,14 +393,37 @@
         };
 
         /**
-         * Initial load function to apply statuses saved in localStorage.
+         * Copies text to clipboard and gives visual feedback
+         */
+         window.copyToClipboard = (text, btnElement) => {
+            navigator.clipboard.writeText(text).then(() => {
+                // Save original icon HTML
+                const originalContent = btnElement.innerHTML;
+                
+                // Change to Checkmark Icon (Green)
+                btnElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+                
+                // Revert after 2 seconds
+                setTimeout(() => {
+                    btnElement.innerHTML = originalContent;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert("Failed to copy link.");
+            });
+        };
+
+        /**
+         * Initial load function to apply statuses and handle Deep Linking
          */
         const initializeGuide = () => {
+            // 1. Load LocalStorage Statuses
             const initialStatuses = loadFixStatuses();
             FIX_KEYS.forEach(key => {
                 updateUI(key, initialStatuses[key]);
             });
-            // Apply default button styling on load, regardless of status
+
+            // 2. Apply Default Button Styles (Fail-safe)
             FIX_KEYS.forEach(key => {
                 const card = document.getElementById(key);
                 const isCompleted = card.classList.contains('completed');
@@ -354,6 +436,26 @@
                     }
                 }
             });
+
+            // 3. Handle Deep Linking (Hash Detection)
+            if (window.location.hash) {
+                const targetId = window.location.hash.substring(1); // remove '#'
+                const targetElement = document.getElementById(targetId);
+                
+                // Verify it's a valid ID in our list (security/sanity check)
+                if (targetElement && FIX_KEYS.includes(targetId)) {
+                    // Slight delay to ensure DOM is fully ready
+                    setTimeout(() => {
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        targetElement.classList.add('target-highlight');
+                        
+                        // Remove animation class after it plays so it can be re-triggered if needed
+                        setTimeout(() => {
+                            targetElement.classList.remove('target-highlight');
+                        }, 2000);
+                    }, 100);
+                }
+            }
         };
 
         // Run initialization when the page is loaded
