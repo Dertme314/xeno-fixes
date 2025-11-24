@@ -3,37 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xeno Help & Tutorial</title>
+    <title>Xeno Help & Tutorial - Dark Theme</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom styles for the dark aesthetic similar to the image */
+        /* Custom styles for a pure black (AMOLED) aesthetic */
         body {
-            /* Very dark almost black background */
-            background-color: #0c0c0c;
+            /* Pure black background */
+            background-color: #000000;
             color: #f3f4f6; /* Light grey/white text for contrast */
             line-height: 1.6;
             font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         }
-        /* Primary accent color (a subtle white/light grey) */
+        /* Primary text/heading color */
         .accent-color {
             color: #ffffff; 
         }
-        /* Navigation bar links and hover */
-        .nav-link {
-            color: #d1d5db; /* Lighter grey for navbar links */
-            transition: color 0.15s ease-in-out;
-        }
-        .nav-link:hover {
-            color: #ffffff; /* White on hover */
-        }
-        /* Card styling with subtle background and border (like the "Xeno not opening" box) */
+        /* Card styling with subtle dark grey background and minimal border */
         .fix-card {
-            background-color: #1a1a1a; /* Dark grey card background */
-            border: 1px solid #2d2d2d; /* Subtle darker border */
+            background-color: #0d0d0d; /* Very dark grey card background */
+            border: 1px solid #1a1a1a; /* Extremely subtle dark border */
             transition: all 0.2s ease-in-out;
         }
         .fix-card:hover {
-            border-color: #3f3f3f; /* Slightly lighter border on hover */
+            border-color: #333333; /* Slightly visible border on hover */
             transform: translateY(-1px);
         }
         /* Completed card styling - kept for functionality */
@@ -43,37 +35,16 @@
         }
         /* Warning box styling - made to stand out a bit more */
         .warning-box {
-            background-color: #261a1a;
+            background-color: #1f0b0b; /* Dark red/black background */
             border: 1px solid #ef4444; /* Red border */
             color: #fca5a5; /* Light red text */
         }
+        /* Removed custom list style for cleaner look */
     </style>
 </head>
 <body class="p-4 md:p-10">
 
     <div class="max-w-7xl mx-auto">
-        
-        <nav class="flex justify-between items-center py-4 px-0 md:px-4">
-            <div class="flex items-center space-x-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f3f4f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M12 2a10 10 0 0 0-9 15.5l9 5.5 9-5.5a10 10 0 0 0-9-15.5z"/><path d="M12 17c-2 0-4-1-4-3s2-3 4-3 4 1 4 3-2 3-4 3z"/></svg>
-                <span class="text-xl font-bold accent-color">Xeno</span>
-            </div>
-            <div class="hidden md:flex space-x-8 text-lg font-medium">
-                <a href="#" class="nav-link">Home</a>
-                <a href="#" class="nav-link">About</a>
-                <a href="#" class="nav-link">Help</a>
-                <a href="#" class="nav-link">Executor</a>
-                <a href="#" class="nav-link">Download</a>
-                <a href="#" class="nav-link">Credits</a>
-                <a href="#" class="nav-link">Donate</a>
-            </div>
-            <a href="https://discord.gg/xe-no" target="_blank" class="flex items-center text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full text-sm font-semibold transition duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="mr-2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm2.5 13.5h-5a.5.5 0 0 1-.5-.5v-4h1v4h4v-4h1v4a.5.5 0 0 1-.5.5zM12 8c-.7 0-1.25.55-1.25 1.25S11.3 10.5 12 10.5s1.25-.55 1.25-1.25S12.7 8 12 8z"/></svg>
-                Join Discord
-            </a>
-        </nav>
-        
-        <div class="border-t border-gray-800 my-4"></div>
         
         <header class="text-center mb-16 py-12">
             <h1 class="text-5xl md:text-7xl font-bold mb-4 tracking-tight text-white">
@@ -93,9 +64,9 @@
 
             <div id="fix-1" class="fix-card p-6 rounded-lg">
                 <div class="flex items-start mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3f4f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mt-1 mr-3"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3f4f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mt-1 mr-3 text-white"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     <div>
-                         <h2 class="text-xl font-bold accent-color mb-1">Xeno not opening</h2> 
+                        <h2 class="text-xl font-bold accent-color mb-1">Xeno not opening</h2> 
                         <p class="text-sm text-gray-400">You do not have the required dependencies downloaded.</p>
                     </div>
                 </div>
@@ -128,10 +99,10 @@
                 
                 <ol class="list-decimal list-inside space-y-3 pl-3 text-gray-300">
                     <li>
-                        Install <strong>Visual C++ Redistributable (x64)</strong>.
+                        Install **Visual C++ Redistributable (x64)**.
                     </li>
                     <li class="text-red-400 font-bold">
-                        Add the Xeno folder to your antivirus exclusions. This is the most common fix.
+                        Add the Xeno folder to your antivirus exclusions.
                     </li>
                     <li>
                         Ensure both Xeno and Roblox are fully closed before running Xeno.
@@ -154,10 +125,10 @@
                 
                 <ol class="list-decimal list-inside space-y-3 pl-3 text-gray-300">
                     <li>
-                        Download the <strong>Roblox Downgrader</strong> utility.
+                        Download the **Roblox Downgrader** utility.
                     </li>
                     <li>
-                        Run the utility to install the <strong>last compatible version</strong>.
+                        Run the utility to install the **last compatible version**.
                     </li>
                     <li class="font-semibold">
                         Launch the downgraded Roblox client via the dedicated shortcut/file before running Xeno.
@@ -180,10 +151,10 @@
                 
                 <ol class="list-decimal list-inside space-y-3 pl-3 text-gray-300">
                     <li class="font-bold">
-                        Completely <strong>delete the ENTIRE Xeno installation folder</strong>.
+                        Completely **delete the ENTIRE Xeno installation folder**.
                     </li>
                     <li>
-                        <strong>Download a fresh copy</strong> of Xeno from the official source.
+                        **Download a fresh copy** of Xeno from the official source.
                     </li>
                     <li class="font-semibold">
                         Extract and run the fresh copy.
@@ -206,11 +177,10 @@
                 
                 <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
                     <li>
-                        <strong>Use the Official Mirror:</strong> 
-                        <a href="https://x3no.pages.dev" target="_blank" class="text-blue-400 hover:text-blue-300 underline">x3no.pages.dev</a>
+                        **Use the Official Mirror:** <a href="https://x3no.pages.dev" target="_blank" class="text-blue-400 hover:text-blue-300 underline">x3no.pages.dev</a>
                     </li>
                     <li>
-                        <strong>Try a Free VPN:</strong> Use Proton VPN to bypass geo-blocks.
+                        **Try a Free VPN:** Use Proton VPN to bypass geo-blocks.
                         <a href="https://protonvpn.com/free-vpn/" target="_blank" class="text-blue-400 hover:text-blue-300 underline">(Get Proton VPN)</a>
                     </li>
                     <li class="font-semibold">
@@ -234,7 +204,7 @@
                 
                 <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
                     <li>
-                        Visit <strong>ScriptBlox</strong> to find the latest, safest community scripts.
+                        Visit **ScriptBlox** to find the latest, safest community scripts.
                         <a href="https://scriptblox.com" target="_blank" class="text-blue-400 hover:text-blue-300 underline">(Go to ScriptBlox)</a>
                     </li>
                     <li class="text-red-400 font-bold pt-1">
@@ -258,7 +228,7 @@
             </h2>
             <ul class="list-disc space-y-2 pl-6 text-gray-300">
                 <li>
-                    Exploits are frequently <strong>falsely marked as viruses/malware</strong> by antivirus software due to their nature (Obfuscation, game manipulation).
+                    Exploits are frequently **falsely marked as viruses/malware** by antivirus software due to their nature (Obfuscation, game manipulation).
                 </li>
                 <li>
                     You must **temporarily disable your anti-virus/firewall** to download and run the file.
@@ -268,7 +238,8 @@
         <footer class="text-center mt-16 pt-6 border-t border-gray-800 text-gray-500 text-sm">
             <p class="mb-2">Guide powered by Xeno community knowledge.</p>
             <p>
-                Having trouble? Join our Discord for real-time support.
+                Need more help? Join our Discord: 
+                <a href="https://discord.gg/xe-no" target="_blank" class="text-blue-400 hover:text-blue-300 font-semibold underline">.gg/xe-no</a>
             </p>
         </footer>
 
