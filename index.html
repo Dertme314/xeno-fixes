@@ -33,18 +33,36 @@
             border-color: #10b981;
             box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
         }
-        /* Warning box styling - made to stand out a bit more */
+        /* Warning box styling */
         .warning-box {
-            background-color: #1f0b0b; /* Dark red/black background */
-            border: 1px solid #ef4444; /* Red border */
-            color: #fca5a5; /* Light red text */
+            background-color: #1f0b0b; 
+            border: 1px solid #ef4444; 
+            color: #fca5a5; 
         }
-        /* Removed custom list style for cleaner look */
+        /* Style for the action buttons */
+        .action-button {
+            padding: 8px 16px;
+            border-radius: 9999px; /* Full circle/pill shape */
+            font-weight: 600;
+            font-size: 0.875rem; /* text-sm */
+            transition: background-color 0.2s;
+        }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
     <div class="max-w-7xl mx-auto">
+        
+        <div class="flex justify-end space-x-4 mb-8">
+            <a href="https://discord.gg/xe-no" target="_blank" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="mr-2"><path d="M22 6.924c-1.638-.975-3.665-1.574-5.83-1.688a.5.5 0 0 0-.44.272l-.12.33c-1.35 3.844-3.1 7.276-5.815 7.276-2.715 0-4.465-3.432-5.815-7.276l-.12-.33a.5.5 0 0 0-.44-.272C5.665 5.35 3.638 5.95 2 6.924v-.004c1.15.545 2.228 1.258 3.12 2.112C4.195 9.878 3.328 11.232 2.76 12.766a.5.5 0 0 0 .195.53C3.626 13.91 4.5 15.352 5 17.1a.5.5 0 0 0 .53.39c1.693-.15 3.32-.4 4.86-.718a.5.5 0 0 0 .54-.037c1.32-1.07 2.64-1.07 3.96 0a.5.5 0 0 0 .54.037c1.54.318 3.167.568 4.86.718a.5.5 0 0 0 .53-.39c.5-.8 1.374-2.242 2.045-3.474a.5.5 0 0 0 .195-.53c-.568-1.534-1.435-2.888-2.55-3.884.892-.854 1.97-1.567 3.12-2.112zM8.5 13.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                Discord
+            </a>
+            <a href="https://xeno.onl" target="_blank" class="action-button bg-blue-600 hover:bg-blue-700 text-white flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                Website
+            </a>
+        </div>
         
         <header class="text-center mb-16 py-12">
             <h1 class="text-5xl md:text-7xl font-bold mb-4 tracking-tight text-white">
@@ -72,14 +90,12 @@
                 </div>
                 
                 <p class="text-gray-300 mb-4">Download Microsoft Visual C++ Redistributable and .NET Runtime 8.0.0</p>
-                <ul class="space-y-2 text-gray-400">
+                <ul class="space-y-2 text-gray-400 list-disc list-inside pl-3">
                     <li class="flex items-center">
-                        <span class="mr-2 text-gray-500">→</span>
-                        <a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank" class="font-medium text-blue-400 hover:text-blue-300">Microsoft Visual C++ Redistributable</a>
+                        <a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank" class="font-medium text-blue-400 hover:text-blue-300 ml-2">Microsoft Visual C++ Redistributable</a>
                     </li>
                     <li class="flex items-center">
-                        <span class="mr-2 text-gray-500">→</span>
-                        <a href="https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.10-windows-x64-installer" target="_blank" class="font-medium text-blue-400 hover:text-blue-300">.NET Runtime 8.0.0</a>
+                        <a href="https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.10-windows-x64-installer" target="_blank" class="font-medium text-blue-400 hover:text-blue-300 ml-2">.NET Runtime 8.0.0</a>
                     </li>
                 </ul>
                 
@@ -97,9 +113,9 @@
                 </div>
                 <p class="text-gray-400 mb-4">Security software interference or missing C++ dependencies.</p>
                 
-                <ol class="list-decimal list-inside space-y-3 pl-3 text-gray-300">
+                <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
                     <li>
-                        Install **Visual C++ Redistributable (x64)**.
+                        Install <b>Visual C++ Redistributable (x64)</b>.
                     </li>
                     <li class="text-red-400 font-bold">
                         Add the Xeno folder to your antivirus exclusions.
@@ -107,7 +123,7 @@
                     <li>
                         Ensure both Xeno and Roblox are fully closed before running Xeno.
                     </li>
-                </ol>
+                </ul>
                 
                 <div class="mt-6 pt-4 border-t border-gray-800 flex justify-end items-center" id="tracker-fix-2">
                     <button onclick="toggleFixStatus('fix-2')" class="px-5 py-2 text-sm rounded-full transition duration-200 font-semibold mark-button">
@@ -123,17 +139,17 @@
                 </div>
                 <p class="text-gray-400 mb-4">Roblox recently updated. Xeno requires a specific client version.</p>
                 
-                <ol class="list-decimal list-inside space-y-3 pl-3 text-gray-300">
+                <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
                     <li>
-                        Download the **Roblox Downgrader** utility.
+                        Download the <b>Roblox Downgrader</b> utility.
                     </li>
                     <li>
-                        Run the utility to install the **last compatible version**.
+                        Run the utility to install the <b>last compatible version</b>.
                     </li>
                     <li class="font-semibold">
                         Launch the downgraded Roblox client via the dedicated shortcut/file before running Xeno.
                     </li>
-                </ol>
+                </ul>
                 
                 <div class="mt-6 pt-4 border-t border-gray-800 flex justify-end items-center" id="tracker-fix-3">
                     <button onclick="toggleFixStatus('fix-3')" class="px-5 py-2 text-sm rounded-full transition duration-200 font-semibold mark-button">
@@ -149,17 +165,17 @@
                 </div>
                 <p class="text-gray-400 mb-4">A critical internal configuration file is corrupted or outdated.</p>
                 
-                <ol class="list-decimal list-inside space-y-3 pl-3 text-gray-300">
+                <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
                     <li class="font-bold">
-                        Completely **delete the ENTIRE Xeno installation folder**.
+                        Completely <b>delete the ENTIRE Xeno installation folder</b>.
                     </li>
                     <li>
-                        **Download a fresh copy** of Xeno from the official source.
+                        <b>Download a fresh copy</b> of Xeno from the official source.
                     </li>
                     <li class="font-semibold">
                         Extract and run the fresh copy.
                     </li>
-                </ol>
+                </ul>
                 
                 <div class="mt-6 pt-4 border-t border-gray-800 flex justify-end items-center" id="tracker-fix-4">
                     <button onclick="toggleFixStatus('fix-4')" class="px-5 py-2 text-sm rounded-full transition duration-200 font-semibold mark-button">
@@ -177,10 +193,10 @@
                 
                 <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
                     <li>
-                        **Use the Official Mirror:** <a href="https://x3no.pages.dev" target="_blank" class="text-blue-400 hover:text-blue-300 underline">x3no.pages.dev</a>
+                        <b>Use the Official Mirror:</b> <a href="https://x3no.pages.dev" target="_blank" class="text-blue-400 hover:text-blue-300 underline">x3no.pages.dev</a>
                     </li>
                     <li>
-                        **Try a Free VPN:** Use Proton VPN to bypass geo-blocks.
+                        <b>Try a Free VPN:</b> Use Proton VPN to bypass geo-blocks.
                         <a href="https://protonvpn.com/free-vpn/" target="_blank" class="text-blue-400 hover:text-blue-300 underline">(Get Proton VPN)</a>
                     </li>
                     <li class="font-semibold">
@@ -204,7 +220,7 @@
                 
                 <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
                     <li>
-                        Visit **ScriptBlox** to find the latest, safest community scripts.
+                        Visit <b>ScriptBlox</b> to find the latest, safest community scripts.
                         <a href="https://scriptblox.com" target="_blank" class="text-blue-400 hover:text-blue-300 underline">(Go to ScriptBlox)</a>
                     </li>
                     <li class="text-red-400 font-bold pt-1">
@@ -228,10 +244,10 @@
             </h2>
             <ul class="list-disc space-y-2 pl-6 text-gray-300">
                 <li>
-                    Exploits are frequently **falsely marked as viruses/malware** by antivirus software due to their nature (Obfuscation, game manipulation).
+                    Exploits are frequently <b>falsely marked as viruses/malware</b> by antivirus software due to their nature (Obfuscation, game manipulation).
                 </li>
                 <li>
-                    You must **temporarily disable your anti-virus/firewall** to download and run the file.
+                    You must <b>temporarily disable your anti-virus/firewall</b> to download and run the file.
                 </li>
             </ul>
         </div>
