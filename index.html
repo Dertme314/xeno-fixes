@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xeno Help & Tutorial - Dark Theme</title>
+    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom styles for a pure black (AMOLED) aesthetic */
@@ -53,17 +54,21 @@
 
     <div class="max-w-7xl mx-auto">
         
+        <!-- TOP RIGHT BUTTONS SECTION -->
         <div class="flex justify-end space-x-4 mb-8">
+            <!-- Discord Button -->
             <a href="https://discord.gg/xe-no" target="_blank" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="mr-2"><path d="M22 6.924c-1.638-.975-3.665-1.574-5.83-1.688a.5.5 0 0 0-.44.272l-.12.33c-1.35 3.844-3.1 7.276-5.815 7.276-2.715 0-4.465-3.432-5.815-7.276l-.12-.33a.5.5 0 0 0-.44-.272C5.665 5.35 3.638 5.95 2 6.924v-.004c1.15.545 2.228 1.258 3.12 2.112C4.195 9.878 3.328 11.232 2.76 12.766a.5.5 0 0 0 .195.53C3.626 13.91 4.5 15.352 5 17.1a.5.5 0 0 0 .53.39c1.693-.15 3.32-.4 4.86-.718a.5.5 0 0 0 .54-.037c1.32-1.07 2.64-1.07 3.96 0a.5.5 0 0 0 .54.037c1.54.318 3.167.568 4.86.718a.5.5 0 0 0 .53-.39c.5-.8 1.374-2.242 2.045-3.474a.5.5 0 0 0 .195-.53c-.568-1.534-1.435-2.888-2.55-3.884.892-.854 1.97-1.567 3.12-2.112zM8.5 13.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
                 Discord
             </a>
+            <!-- Website Button (xeno.onl) -->
             <a href="https://xeno.onl" target="_blank" class="action-button bg-blue-600 hover:bg-blue-700 text-white flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 Website
             </a>
         </div>
         
+        <!-- Main Heading Section -->
         <header class="text-center mb-16 py-12">
             <h1 class="text-5xl md:text-7xl font-bold mb-4 tracking-tight text-white">
                 Help & Tutorial
@@ -73,13 +78,16 @@
             </p>
         </header>
 
+        <!-- Common Issues Title -->
         <div class="flex items-center justify-center mb-10">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f3f4f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><path d="M9.09 3a9 9 0 0 1 5.86 1.13c1.78.68 3.1 2.2 3.55 4.02.45 1.82 0 3.82-1.3 5.12l-5.6 5.6c-1.3 1.3-3.05 1.84-4.87 1.39-1.82-.45-3.34-1.77-4.02-3.55A9 9 0 0 1 3 14.91"/></svg>
             <h2 class="text-2xl font-semibold text-white">Common Issues</h2>
         </div>
 
+        <!-- Main Fixes Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16" id="fixes-grid">
 
+            <!-- FIX 1: Missing Prerequisites -->
             <div id="fix-1" class="fix-card p-6 rounded-lg">
                 <div class="flex items-start mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f3f4f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mt-1 mr-3 text-white"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -89,10 +97,10 @@
                     </div>
                 </div>
                 
-                <p class="text-gray-300 mb-4">Download Microsoft Visual C++ Redistributable and .NET Runtime 8.0.0</p>
+                <p class="text-gray-300 mb-4">Download Microsoft Webview2 and .NET Runtime 8.0.0</p>
                 <ul class="space-y-2 text-gray-400 list-disc list-inside pl-3">
                     <li class="flex items-center">
-                        <a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank" class="font-medium text-blue-400 hover:text-blue-300 ml-2">Microsoft Visual C++ Redistributable</a>
+                        <a href="https://go.microsoft.com/fwlink/?linkid=2124701" target="_blank" class="font-medium text-blue-400 hover:text-blue-300 ml-2">Microsoft Webview2</a>
                     </li>
                     <li class="flex items-center">
                         <a href="https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.10-windows-x64-installer" target="_blank" class="font-medium text-blue-400 hover:text-blue-300 ml-2">.NET Runtime 8.0.0</a>
@@ -106,18 +114,19 @@
                 </div>
             </div>
 
+            <!-- FIX 2: Failed to Attach Error (Hyperlinked C++ Redistributable) -->
             <div id="fix-2" class="fix-card p-6 rounded-lg">
                 <div class="flex items-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M15 9l-4 4-2-2"/></svg>
-                    <h2 class="text-xl font-bold accent-color">2. "Failed to Attach" Error</h2>
+                    <h2 class="text-xl font-bold accent-color">"Failed to Attach" Error</h2>
                 </div>
                 <p class="text-gray-400 mb-4">Security software interference or missing C++ dependencies.</p>
                 
                 <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
                     <li>
-                        Install <b>Visual C++ Redistributable (x64)</b>.
+                        Install <b><a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank" class="text-blue-400 hover:text-blue-300 underline">Visual C++ Redistributable (x64)</a></b>.
                     </li>
-                    <li class="text-red-400 font-bold">
+                    <li class="text-gray-400 font-bold">
                         Add the Xeno folder to your antivirus exclusions.
                     </li>
                     <li>
@@ -132,22 +141,23 @@
                 </div>
             </div>
 
+            <!-- FIX 3: Version Mismatch Error (Roblox Downgrader hyperlinked) -->
             <div id="fix-3" class="fix-card p-6 rounded-lg">
                 <div class="flex items-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    <h2 class="text-xl font-bold accent-color">3. Version Mismatch / Crash</h2>
+                    <h2 class="text-xl font-bold accent-color">Version Mismatch / Crash</h2>
                 </div>
-                <p class="text-gray-400 mb-4">Roblox recently updated. Xeno requires a specific client version.</p>
+                <p class="text-gray-400 mb-4">Roblox recently updated. Xeno requires specific client versions.</p>
                 
                 <ul class="list-disc list-inside space-y-3 pl-3 text-gray-300">
                     <li>
-                        Download the <b>Roblox Downgrader</b> utility.
+                        Download the <b><a href="https://rdd.weao.gg" target="_blank" class="text-blue-400 hover:text-blue-300 underline">Roblox Downgrader/installer</a></b> utility.
                     </li>
                     <li>
                         Run the utility to install the <b>last compatible version</b>.
                     </li>
                     <li class="font-semibold">
-                        Launch the downgraded Roblox client via the dedicated shortcut/file before running Xeno.
+                        Launch the downgraded Robloxplayerbeta.exe via the folder you installed.
                     </li>
                 </ul>
                 
@@ -158,10 +168,11 @@
                 </div>
             </div>
             
+            <!-- FIX 4: JSON Parsing Error -->
             <div id="fix-4" class="fix-card p-6 rounded-lg">
                 <div class="flex items-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                    <h2 class="text-xl font-bold accent-color">4. "Error Parsing Clients JSON"</h2>
+                    <h2 class="text-xl font-bold accent-color">"Error Parsing Clients JSON"</h2>
                 </div>
                 <p class="text-gray-400 mb-4">A critical internal configuration file is corrupted or outdated.</p>
                 
@@ -184,10 +195,11 @@
                 </div>
             </div>
 
+            <!-- FIX 5: Website Access -->
             <div id="fix-5" class="fix-card p-6 rounded-lg">
                 <div class="flex items-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                    <h2 class="text-xl font-bold accent-color">5. Official Site Blocked/Down</h2>
+                    <h2 class="text-xl font-bold accent-color">Official Site Blocked/Down</h2>
                 </div>
                 <p class="text-gray-400 mb-4">If you cannot reach the main download source due to ISP or network blocks.</p>
                 
@@ -196,11 +208,12 @@
                         <b>Use the Official Mirror:</b> <a href="https://x3no.pages.dev" target="_blank" class="text-blue-400 hover:text-blue-300 underline">x3no.pages.dev</a>
                     </li>
                     <li>
+                        <b>Use a Web Proxy (Proxyium):</b> Access the official site via a proxy if it's blocked.
+                        <a href="https://www.proxyium.com/" target="_blank" class="text-blue-400 hover:text-blue-300 underline">(Go to Proxyium)</a>
+                    </li>
+                    <li>
                         <b>Try a Free VPN:</b> Use Proton VPN to bypass geo-blocks.
                         <a href="https://protonvpn.com/free-vpn/" target="_blank" class="text-blue-400 hover:text-blue-300 underline">(Get Proton VPN)</a>
-                    </li>
-                    <li class="font-semibold">
-                        Always use the official link on these sites for the official download.
                     </li>
                 </ul>
                 
@@ -211,10 +224,11 @@
                 </div>
             </div>
             
+            <!-- FIX 6: Need Scripts -->
             <div id="fix-6" class="fix-card p-6 rounded-lg">
                 <div class="flex items-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
-                    <h2 class="text-xl font-bold accent-color">6. Need Scripts?</h2>
+                    <h2 class="text-xl font-bold accent-color">Need Scripts?</h2>
                 </div>
                 <p class="text-gray-400 mb-4">Finding reliable and current scripts for your game session.</p>
                 
@@ -237,6 +251,7 @@
 
         </div>
 
+        <!-- General Info Section -->
         <div class="warning-box p-6 rounded-lg shadow-lg mt-8">
             <h2 class="text-2xl font-bold mb-3 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-3"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -251,6 +266,9 @@
                 </li>
             </ul>
         </div>
+        <!-- End General Info Section -->
+
+        <!-- Footer Section (Updated for Discord link) -->
         <footer class="text-center mt-16 pt-6 border-t border-gray-800 text-gray-500 text-sm">
             <p class="mb-2">Guide powered by Xeno community knowledge.</p>
             <p>
@@ -261,6 +279,7 @@
 
     </div>
 
+    <!-- JavaScript for Status Tracker (Unchanged for functionality) -->
     <script>
         // --- LOCAL STORAGE DATA HANDLING ---
         const FIX_KEYS = ['fix-1', 'fix-2', 'fix-3', 'fix-4', 'fix-5', 'fix-6'];
