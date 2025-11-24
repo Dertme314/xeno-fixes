@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xeno Troubleshooting Guide</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Inter font and a smooth appearance */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* Dark background */
+            color: #e6e6e6; /* Light text */
+            line-height: 1.6;
+        }
+        /* Custom class for the accent color used on links/titles */
+        .accent-text {
+            color: #58a6ff; /* A bright blue for links and headers */
+        }
+        /* Style for the link buttons */
+        .link-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            margin-top: 0.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            background-color: #21262d; /* Darker button background */
+            border: 1px solid #30363d;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .link-button:hover {
+            background-color: #30363d;
+            border-color: #58a6ff;
+        }
+        /* Style for copyable code block */
+        .code-block {
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            color: #d4ae3f; /* Gold/yellow for paths */
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            word-break: break-all;
+            cursor: pointer;
+            transition: background-color 0.15s;
+        }
+        .code-block:hover {
+            background-color: #30363d;
+        }
+        /* Styling for completed card */
+        .fix-card.completed {
+            border: 2px solid #52e37f; /* Bright green border */
+            box-shadow: 0 4px 10px rgba(82, 227, 127, 0.2);
+        }
+        .fix-card {
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        
+        <!-- Header Section -->
+        <header class="text-center mb-12 py-6 border-b border-gray-700">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-2">
+                Xeno <span class="accent-text">Fix-It</span> Guide
+            </h1>
+            <p class="text-gray-400 text-lg">Quick solutions for common Xeno errors. Mark steps as done to track your progress!</p>
+        </header>
+
+        <!-- Main Fixes Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="fixes-grid">
+
+            <!-- FIX 1: Missing Prerequisites -->
+            <div id="fix-1" class="fix-card p-6 bg-[#161b22] rounded-xl shadow-lg border border-[#30363d]">
+                <div class="flex items-center mb-4">
+                    <!-- Icon: Download/Tools -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7 mr-3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <h2 class="text-xl font-bold accent-text">1. Xeno Not Opening (Prerequisites)</h2>
+                </div>
+                <p class="text-gray-400 mb-4">Xeno needs the latest Microsoft helper files (Runtimes) to start.</p>
+                
+                <ol class="list-decimal list-inside space-y-3 pl-3">
+                    <li class="text-gray-300">
+                        Install <strong>WebView2 Runtime (x64)</strong> from the link below:
+                        <a href="https://go.microsoft.com/fwlink/?linkid=2124701" target="_blank" class="link-button ml-2">
+                            Download WebView2
+                        </a>
+                    </li>
+                    <li class="text-gray-300">
+                        Install <strong>.NET 8.0 Desktop Runtime (x64)</strong>:
+                        <a href="https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.10-windows-x64-installer" target="_blank" class="link-button ml-2">
+                            Download .NET 8.0
+                        </a>
+                    </li>
+                    <li class="text-gray-300">
+                        <strong>Restart your PC</strong> after installing both.
+                    </li>
+                    <li class="text-gray-300 font-semibold">
+                        Try opening Xeno again. ✅
+                    </li>
+                </ol>
+                <!-- Status Tracker Button -->
+                <div class="mt-4 pt-4 border-t border-gray-800 flex justify-between items-center" id="tracker-fix-1">
+                    <span class="text-sm font-medium text-gray-500 status-text">Status: Pending</span>
+                    <button onclick="toggleFixStatus('fix-1')" class="px-4 py-2 text-sm rounded-full bg-blue-600 hover:bg-blue-700 transition duration-150 mark-button">
+                        Mark as Fixed
+                    </button>
+                </div>
+            </div>
+
+            <!-- FIX 2: Failed to Attach Error (Security) -->
+            <div id="fix-2" class="fix-card p-6 bg-[#161b22] rounded-xl shadow-lg border border-[#30363d]">
+                <div class="flex items-center mb-4">
+                    <!-- Icon: Shield/Security -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f08047" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7 mr-3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M15 9l-4 4-2-2"/></svg>
+                    <h2 class="text-xl font-bold accent-text">2. "Failed to Attach" Error</h2>
+                </div>
+                <p class="text-gray-400 mb-4">Your security software is likely blocking Xeno, or a file is missing.</p>
+                
+                <ol class="list-decimal list-inside space-y-3 pl-3">
+                    <li class="text-gray-300">
+                        Install <strong>Visual C++ Redistributable (x64)</strong>:
+                        <a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank" class="link-button ml-2">
+                            Download VC++
+                        </a>
+                    </li>
+                    <li class="text-gray-300 font-bold text-red-400">
+                        Temporarily disable your antivirus (<a href="https://learn.microsoft.com/en-us/defender-endpoint/configure-exclusions-microsoft-defender-antivirus" target="_blank" class="accent-text hover:underline font-bold">Windows Defender</a>) OR <strong>add the Xeno folder to its exclusions.</strong>
+                    </li>
+                    <li class="text-gray-300">
+                        Close both Xeno and Roblox.
+                    </li>
+                    <li class="text-gray-300 font-semibold">
+                        Open and close Xeno and Roblox a few times to let them sync up.
+                    </li>
+                </ol>
+                <!-- Status Tracker Button -->
+                <div class="mt-4 pt-4 border-t border-gray-800 flex justify-between items-center" id="tracker-fix-2">
+                    <span class="text-sm font-medium text-gray-500 status-text">Status: Pending</span>
+                    <button onclick="toggleFixStatus('fix-2')" class="px-4 py-2 text-sm rounded-full bg-blue-600 hover:bg-blue-700 transition duration-150 mark-button">
+                        Mark as Fixed
+                    </button>
+                </div>
+            </div>
+
+            <!-- FIX 3: Version Mismatch Error (REINTRODUCED) -->
+            <div id="fix-3" class="fix-card p-6 bg-[#161b22] rounded-xl shadow-lg border border-[#30363d]">
+                <div class="flex items-center mb-4">
+                    <!-- Icon: Alert/Mismatch -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d4ae3f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7 mr-3"><path d="M10.29 3.86a2 2 0 0 0-3.1 0L.98 17.65a2 2 0 0 0 1.52 3.35H21.5a2 2 0 0 0 1.52-3.35z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <h2 class="text-xl font-bold accent-text">3. Version Mismatch / Crashing</h2>
+                </div>
+                <p class="text-gray-400 mb-4">Roblox updated, but Xeno is still compatible with the older version. You need to temporarily downgrade your Roblox client.</p>
+                
+                <ol class="list-decimal list-inside space-y-3 pl-3">
+                    <li class="text-gray-300">
+                        Download the <strong>Roblox Downgrader</strong> tool:
+                        <a href="https://rdd.weao.gg/" target="_blank" class="link-button ml-2">
+                            Download Downgrader
+                        </a>
+                        <span class="text-sm text-gray-500 block mt-1">(Click 'Install Latest Version' on the site)</span>
+                    </li>
+                    <li class="text-gray-300">
+                        <strong>Extract (unzip)</strong> the downloaded file.
+                    </li>
+                    <li class="text-gray-300 font-semibold">
+                        <strong>Run the downgrader tool</strong> to apply the correct Roblox client version.
+                    </li>
+                    <li class="text-gray-300 font-semibold">
+                        Try running Xeno again.
+                    </li>
+                </ol>
+                <!-- Status Tracker Button -->
+                <div class="mt-4 pt-4 border-t border-gray-800 flex justify-between items-center" id="tracker-fix-3">
+                    <span class="text-sm font-medium text-gray-500 status-text">Status: Pending</span>
+                    <button onclick="toggleFixStatus('fix-3')" class="px-4 py-2 text-sm rounded-full bg-blue-600 hover:bg-blue-700 transition duration-150 mark-button">
+                        Mark as Fixed
+                    </button>
+                </div>
+            </div>
+
+            <!-- FIX 4: JSON Parsing Error (formerly Fix 3) -->
+            <div id="fix-4" class="fix-card p-6 bg-[#161b22] rounded-xl shadow-lg border border-[#30363d]">
+                <div class="flex items-center mb-4">
+                    <!-- Icon: Trash/Clean -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b088ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7 mr-3"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    <h2 class="text-xl font-bold accent-text">4. "Error Parsing Clients JSON"</h2>
+                </div>
+                <p class="text-gray-400 mb-4">This means one of Xeno's internal files is broken. You need a completely clean reinstall.</p>
+                
+                <ol class="list-decimal list-inside space-y-3 pl-3">
+                    <li class="text-gray-300 font-bold">
+                        Find and <strong>Delete the ENTIRE Xeno folder</strong> using File Explorer.
+                    </li>
+                    <li class="text-gray-300">
+                        <strong>Do NOT use your old ZIP file!</strong> Reinstall Xeno by downloading a <strong>fresh copy</strong> from the official website.
+                    </li>
+                    <li class="text-gray-300 font-semibold">
+                        Launch Xeno again. The issue should be fixed. ✅
+                    </li>
+                </ol>
+                <!-- Status Tracker Button -->
+                <div class="mt-4 pt-4 border-t border-gray-800 flex justify-between items-center" id="tracker-fix-4">
+                    <span class="text-sm font-medium text-gray-500 status-text">Status: Pending</span>
+                    <button onclick="toggleFixStatus('fix-4')" class="px-4 py-2 text-sm rounded-full bg-blue-600 hover:bg-blue-700 transition duration-150 mark-button">
+                        Mark as Fixed
+                    </button>
+                </div>
+            </div>
+
+            <!-- FIX 5: Website Access (formerly Fix 4) -->
+            <div id="fix-5" class="fix-card p-6 bg-[#161b22] rounded-xl shadow-lg border border-[#30363d]">
+                <div class="flex items-center mb-4">
+                    <!-- Icon: Globe/Access -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#52e37f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7 mr-3"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    <h2 class="text-xl font-bold accent-text">5. Can’t Access Website?</h2>
+                </div>
+                <p class="text-gray-400 mb-4">If the main site is blocked or down, use a proxy or a mirror site.</p>
+                
+                <ul class="list-disc list-inside space-y-3 pl-3">
+                    <li class="text-gray-300">
+                        <strong>Use a Proxy:</strong> Go to 
+                        <a href="https://proxyium.com/" target="_blank" class="accent-text hover:underline">https://proxyium.com/</a>
+                        and type <strong>`xeno.now`</strong>.
+                    </li>
+                    <li class="text-gray-300">
+                        <strong>Use the Official Mirror:</strong>
+                        <a href="https://x3no.pages.dev" target="_blank" class="accent-text hover:underline">x3no.pages.dev</a>
+                    </li>
+                    <li class="text-gray-300 font-semibold">
+                        <strong>Always use LootLabs</strong> to get the Xeno download from these sites.
+                    </li>
+                </ul>
+                <!-- Status Tracker Button -->
+                <div class="mt-4 pt-4 border-t border-gray-800 flex justify-between items-center" id="tracker-fix-5">
+                    <span class="text-sm font-medium text-gray-500 status-text">Status: Pending</span>
+                    <button onclick="toggleFixStatus('fix-5')" class="px-4 py-2 text-sm rounded-full bg-blue-600 hover:bg-blue-700 transition duration-150 mark-button">
+                        Mark as Fixed
+                    </button>
+                </div>
+            </div>
+            
+            <!-- FIX 6: Need Scripts (formerly Fix 5) -->
+            <div id="fix-6" class="fix-card p-6 bg-[#161b22] rounded-xl shadow-lg border border-[#30363d]">
+                <div class="flex items-center mb-4">
+                    <!-- Icon: Code/Scripts -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff7c7c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7 mr-3"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
+                    <h2 class="text-xl font-bold accent-text">6. Need Scripts?</h2>
+                </div>
+                <p class="text-gray-400 mb-4">Looking for game scripts to run with Xeno? Use a trusted community source.</p>
+                
+                <ul class="list-disc list-inside space-y-3 pl-3">
+                    <li class="text-gray-300">
+                        Visit <strong>ScriptBlox</strong> to find the latest and safest scripts for Xeno.
+                    </li>
+                    <li class="text-gray-300 font-semibold">
+                        <a href="https://scriptblox.com" target="_blank" class="link-button">
+                            Go to ScriptBlox
+                        </a>
+                    </li>
+                </ul>
+                <!-- Status Tracker Button -->
+                <div class="mt-4 pt-4 border-t border-gray-800 flex justify-between items-center" id="tracker-fix-6">
+                    <span class="text-sm font-medium text-gray-500 status-text">Status: Pending</span>
+                    <button onclick="toggleFixStatus('fix-6')" class="px-4 py-2 text-sm rounded-full bg-blue-600 hover:bg-blue-700 transition duration-150 mark-button">
+                        Mark as Fixed
+                    </button>
+                </div>
+            </div>
+            <!-- End FIX 6 -->
+
+        </div>
+
+        <footer class="text-center mt-12 pt-6 border-t border-gray-700 text-gray-500 text-sm">
+            <p>&copy; Troubleshooting Guide by Xeno Community</p>
+        </footer>
+
+    </div>
+
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Variables
+        let db;
+        let auth;
+        let userId;
+        let appId;
+        let isAuthReady = false;
+
+        // Configuration
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // Fix keys for tracking (Updated to include 6 fixes)
+        const FIX_KEYS = ['fix-1', 'fix-2', 'fix-3', 'fix-4', 'fix-5', 'fix-6'];
+        const FIREBASE_DOC_ID = 'status';
+
+        // --- FIREBASE INITIALIZATION & AUTH ---
+
+        const initializeFirebase = async () => {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Authenticate user using custom token or anonymously
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        isAuthReady = true;
+                        console.log("User authenticated. Loading data.");
+                        loadFixStatuses();
+                    } else {
+                        // Use a random ID if anonymous sign-in failed (shouldn't happen in canvas)
+                        userId = crypto.randomUUID();
+                        isAuthReady = true;
+                        console.log("Anonymous sign-in. Data will not persist across sessions.");
+                        loadFixStatuses(); // Still load local/default state
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+            }
+        };
+
+        // --- FIRESTORE DATA HANDLING ---
+
+        const getFixDocRef = () => {
+            if (!userId || !appId) return null;
+            // Private user data path: /artifacts/{appId}/users/{userId}/xeno_fixes/{status}
+            return doc(db, 'artifacts', appId, 'users', userId, 'xeno_fixes', FIREBASE_DOC_ID);
+        };
+
+        const loadFixStatuses = () => {
+            if (!isAuthReady) return;
+
+            const docRef = getFixDocRef();
+            if (!docRef) return;
+
+            // Use onSnapshot to get real-time updates
+            onSnapshot(docRef, (docSnap) => {
+                const statuses = docSnap.exists() ? docSnap.data() : {};
+                
+                FIX_KEYS.forEach(key => {
+                    const isCompleted = statuses[key] === true;
+                    updateUI(key, isCompleted);
+                });
+                console.log("Fix statuses loaded from Firestore.");
+            }, (error) => {
+                console.error("Error listening to fix status:", error);
+            });
+        };
+
+        window.toggleFixStatus = async (fixId) => {
+            if (!isAuthReady) return;
+
+            const docRef = getFixDocRef();
+            if (!docRef) {
+                console.error("Cannot save status: Firestore not initialized or userId missing.");
+                return;
+            }
+
+            try {
+                // Get the current status
+                const currentStatus = (await getDoc(docRef)).data();
+                const newStatus = !currentStatus?.[fixId];
+
+                // Update only the specific field
+                await setDoc(docRef, {
+                    [fixId]: newStatus
+                }, { merge: true });
+
+                console.log(`Fix ${fixId} status toggled to: ${newStatus}`);
+                // UI update happens via the onSnapshot listener
+            } catch (e) {
+                console.error("Error updating fix status:", e);
+            }
+        };
+
+        // --- UI UPDATES ---
+
+        const updateUI = (fixId, isCompleted) => {
+            const card = document.getElementById(fixId);
+            const trackerContainer = document.getElementById(`tracker-${fixId}`);
+            
+            if (!card || !trackerContainer) return;
+
+            const statusText = trackerContainer.querySelector('.status-text');
+            const markButton = trackerContainer.querySelector('.mark-button');
+
+            if (isCompleted) {
+                card.classList.add('completed');
+                statusText.textContent = 'Status: FIXED! ✅';
+                statusText.classList.remove('text-gray-500');
+                statusText.classList.add('text-green-400');
+                markButton.textContent = 'Mark as Pending';
+                markButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                markButton.classList.add('bg-gray-600', 'hover:bg-gray-700');
+            } else {
+                card.classList.remove('completed');
+                statusText.textContent = 'Status: Pending';
+                statusText.classList.remove('text-green-400');
+                statusText.classList.add('text-gray-500');
+                markButton.textContent = 'Mark as Fixed';
+                markButton.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+                markButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }
+        };
+
+        // --- Utility for Copying Path (No longer needed, but kept for future use) ---
+
+        window.copyPath = (element) => {
+            const textToCopy = element.textContent.trim();
+            
+            // Simple clipboard copy function (cross-browser compatible within Canvas)
+            const el = document.createElement('textarea');
+            el.value = textToCopy;
+            el.setAttribute('readonly', '');
+            el.style.position = 'absolute';
+            el.style.left = '-9999px';
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            element.textContent = 'Path Copied! ✅';
+            setTimeout(() => {
+                element.textContent = textToCopy; // Restore original text
+            }, 1500);
+        };
+        
+        // Start Initialization
+        initializeFirebase();
+
+    </script>
+</body>
+</html>
