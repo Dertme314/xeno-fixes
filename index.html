@@ -430,11 +430,63 @@
 
 <script>
 // -----------------------------
-// Chat System (Simple AI)
+// Full AI Chat Script with Preloaded Fixes and Markdown Rendering
 // -----------------------------
+
 let messages = [];
 let isChatOpen = false;
 
+// -----------------------------
+// Preloaded Xeno Fixes
+// -----------------------------
+const fixesContext = `
+Common Issues:
+
+1. Xeno not opening
+- You do not have the required dependencies downloaded.
+- Download Microsoft Webview2 and .NET Runtime 8.0.0
+- Microsoft Webview2
+- .NET Runtime 8.0.0
+
+2. "Failed to Attach" Error
+- Security software interference or missing C++ dependencies.
+- Install Visual C++ Redist. (x64)
+- Add the Xeno folder to your antivirus exclusions.
+- Ensure both Xeno and Roblox are fully closed before running Xeno.
+
+3. Version Mismatch / Crash
+- Roblox recently updated. Xeno requires specific client versions.
+- Download: Roblox Downgrader
+- Run the utility to install the last compatible version.
+- Launch the downgraded Robloxplayerbeta.exe via the folder you installed.
+
+4. Corrupted Cache Error
+- "Error Parsing Clients JSON" or corrupted installation.
+- Press Win + R on your keyboard.
+- Type %localappdata%/xeno
+- Delete the entire "Xeno" folder.
+- Reinstall Xeno from scratch.
+
+5. Official Site Blocked
+- If you cannot reach the main download source due to ISP blocks.
+- Mirror: x3no.pages.dev
+- Web Proxy: Proxyium
+
+6. Need Scripts?
+- Finding reliable and current scripts for your game session.
+- Visit ScriptBlox for scripts.
+
+7. Tabs saying "null"
+- Your tab configuration files have become corrupt.
+- Press Win + R to open Run.
+- Type: %localappdata%/xeno/tabs
+- Delete everything inside this folder.
+- Restart Xeno.
+`;
+
+// -----------------------------
+// Chat Window Toggle
+// -----------------------------
 function toggleChat() {
     const chatWindow = document.getElementById('chat-window');
     const iconOpen = document.getElementById('icon-open');
@@ -442,46 +494,49 @@ function toggleChat() {
     isChatOpen = !isChatOpen;
 
     if (isChatOpen) {
-        chatWindow.classList.remove('chat-hidden');
-        chatWindow.classList.add('chat-visible');
-        iconOpen.classList.add('hidden');
-        iconClose.classList.remove('hidden');
+        chatWindow.classList.remove('chat-hidden'); chatWindow.classList.add('chat-visible');
+        iconOpen.classList.add('hidden'); iconClose.classList.remove('hidden');
     } else {
-        chatWindow.classList.remove('chat-visible');
-        chatWindow.classList.add('chat-hidden');
-        iconOpen.classList.remove('hidden');
-        iconClose.classList.add('hidden');
+        chatWindow.classList.remove('chat-visible'); chatWindow.classList.add('chat-hidden');
+        iconOpen.classList.remove('hidden'); iconClose.classList.add('hidden');
     }
 }
 
+// -----------------------------
+// Enter key handler
+// -----------------------------
 function handleEnter(e) {
     if (e.key === 'Enter') sendMessage();
 }
 
-// Append message to chat
+// -----------------------------
+// Append Message (User or AI)
+// -----------------------------
 function appendMessage(text, sender) {
     const container = document.getElementById('chat-messages');
     const div = document.createElement('div');
     div.className = sender === 'user' ? 'flex justify-end' : 'flex justify-start';
 
     const bubble = document.createElement('div');
-    if (sender === 'user') {
-        bubble.className = 'bg-indigo-600 text-white rounded-lg rounded-tr-none p-3 text-sm max-w-[85%]';
-    } else {
-        bubble.className = 'bg-gray-800 text-gray-200 rounded-lg rounded-tl-none p-3 text-sm max-w-[85%] border border-gray-700';
-    }
+    bubble.className = sender === 'user'
+        ? 'bg-indigo-600 text-white rounded-lg rounded-tr-none p-3 text-sm max-w-[85%]'
+        : 'bg-gray-800 text-gray-200 rounded-lg rounded-tl-none p-3 text-sm max-w-[85%] border border-gray-700';
 
-    // Markdown fallback
-    bubble.innerHTML = (typeof marked !== "undefined")
-        ? marked.parse(text)
-        : text.replace(/\n/g, "<br>");
+    // Render Markdown with marked.js
+    if (typeof marked !== 'undefined') {
+        bubble.innerHTML = marked.parse(text);
+    } else {
+        bubble.innerHTML = text.replace(/\n/g, '<br>');
+    }
 
     div.appendChild(bubble);
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
 }
 
-// Typing indicator
+// -----------------------------
+// Typing Indicator
+// -----------------------------
 function showTypingIndicator() {
     const container = document.getElementById('chat-messages');
     const div = document.createElement('div');
@@ -502,7 +557,9 @@ function removeTypingIndicator() {
     if (el) el.remove();
 }
 
-// Send message to AI
+// -----------------------------
+// Send Message to AI
+// -----------------------------
 async function sendMessage() {
     const input = document.getElementById('chat-input');
     const message = input.value.trim();
@@ -512,9 +569,10 @@ async function sendMessage() {
     appendMessage(message, 'user');
     showTypingIndicator();
 
-    // Prepare messages for API
+    // Prepare messages with system prompt
     const contextMessages = [
-        ...messages.slice(-5), // last 5 messages
+        { role: "system", content: "You are a helpful support assistant for Xeno. Use the following fixes to answer user questions:\n\n" + fixesContext },
+        ...messages.slice(-5),
         { role: "user", content: message }
     ];
 
@@ -536,12 +594,13 @@ async function sendMessage() {
         removeTypingIndicator();
         appendMessage(aiText, 'ai');
 
-    } catch (err) {
+    } catch(err) {
         console.error(err);
         removeTypingIndicator();
         appendMessage("Error: Could not connect to AI. " + err.message, 'ai');
     }
 }
+
 </script>
 </body>
 </html>
