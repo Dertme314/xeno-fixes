@@ -34,7 +34,7 @@ export default async function handler(req, res) {
         "X-Title": "Xeno Help RAG"
       },
       body: JSON.stringify({
-        model: "tngtech/deepseek-r1t2-chimera:free", // The model to use
+        model: "tngtech/deepseek-r1t2-chimera:free", // A strong model that is good at following instructions/formatting
         messages: fullConversation // Send the full, contextualized conversation
       })
     });
