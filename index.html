@@ -58,6 +58,35 @@
         .green-pulse {
             animation: green-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
+
+        /* CHAT BOT STYLES */
+        .chat-container {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .chat-hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+        .chat-visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+        .typing-dot {
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        /* Scrollbar for chat */
+        .chat-scroll::-webkit-scrollbar { width: 6px; }
+        .chat-scroll::-webkit-scrollbar-track { background: #111; }
+        .chat-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        .chat-scroll::-webkit-scrollbar-thumb:hover { background: #555; }
     </style>
 </head>
 <body class="p-4 md:p-10 min-h-screen">
@@ -361,14 +390,48 @@
 
     </div>
 
+    <div id="ai-widget" class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
+        
+        <div id="chat-window" class="chat-hidden mb-4 w-80 md:w-96 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300" style="height: 500px; max-height: 80vh;">
+            
+            <div class="bg-gray-800 p-4 border-b border-gray-700 flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></div>
+                    <h3 class="font-bold text-white">Xeno AI Support</h3>
+                </div>
+            </div>
+
+            <div class="relative flex-1 bg-black/50 flex flex-col h-full overflow-hidden">
+                
+                <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 chat-scroll">
+                    <div class="flex justify-start">
+                        <div class="bg-gray-800 text-gray-200 rounded-lg rounded-tl-none p-3 text-sm max-w-[85%] border border-gray-700">
+                            Hello! I can help you fix common Xeno issues. Ask me anything!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-gray-800 border-t border-gray-700">
+                    <div class="flex items-center bg-gray-900 rounded-lg border border-gray-600 px-3 py-2">
+                        <input type="text" id="chat-input" placeholder="Type a message..." class="bg-transparent border-none text-white text-sm w-full focus:outline-none" onkeypress="handleEnter(event)">
+                        <button onclick="sendMessage()" class="ml-2 text-indigo-400 hover:text-white transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="toggleChat()" class="bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-lg transition-transform hover:scale-105 flex items-center justify-center">
+            <svg id="icon-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <svg id="icon-close" class="hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </div>
+
     <script>
-        // --- LOCAL STORAGE DATA HANDLING ---
-        // Added fix-7 to the array
+        // --- LOCAL STORAGE DATA HANDLING (Fix Tracker) ---
         const FIX_KEYS = ['fix-1', 'fix-2', 'fix-3', 'fix-4', 'fix-5', 'fix-6', 'fix-7'];
 
-        /**
-         * Loads the completion status of all fixes from localStorage.
-         */
         const loadFixStatuses = () => {
             const statuses = {};
             FIX_KEYS.forEach(key => {
@@ -377,23 +440,13 @@
             return statuses;
         };
 
-        /**
-         * Toggles the completion status of a fix and saves it to localStorage.
-         */
         window.toggleFixStatus = (fixId) => {
             const currentStatus = localStorage.getItem(fixId) === 'true';
             const newStatus = !currentStatus;
-
-            // Save new status to localStorage
             localStorage.setItem(fixId, newStatus);
-            
-            // Update the UI immediately
             updateUI(fixId, newStatus);
         };
 
-        /**
-         * Updates the visual appearance of a fix card based on its status.
-         */
         const updateUI = (fixId, isCompleted) => {
             const card = document.getElementById(fixId);
             const trackerContainer = document.getElementById(`tracker-${fixId}`);
@@ -415,18 +468,10 @@
             }
         };
 
-        /**
-         * Copies text to clipboard and gives visual feedback
-         */
          window.copyToClipboard = (text, btnElement) => {
             navigator.clipboard.writeText(text).then(() => {
-                // Save original icon HTML
                 const originalContent = btnElement.innerHTML;
-                
-                // Change to Checkmark Icon (Green)
                 btnElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
-                
-                // Revert after 2 seconds
                 setTimeout(() => {
                     btnElement.innerHTML = originalContent;
                 }, 2000);
@@ -435,11 +480,129 @@
             });
         };
 
+        // --- AI CHAT WIDGET LOGIC ---
+        let isChatOpen = false;
+        let messages = [];
+
+        function toggleChat() {
+            isChatOpen = !isChatOpen;
+            const chatWindow = document.getElementById('chat-window');
+            const iconOpen = document.getElementById('icon-open');
+            const iconClose = document.getElementById('icon-close');
+            
+            if (isChatOpen) {
+                chatWindow.classList.remove('chat-hidden');
+                chatWindow.classList.add('chat-visible');
+                iconOpen.classList.add('hidden');
+                iconClose.classList.remove('hidden');
+            } else {
+                chatWindow.classList.remove('chat-visible');
+                chatWindow.classList.add('chat-hidden');
+                iconOpen.classList.remove('hidden');
+                iconClose.classList.add('hidden');
+            }
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function appendMessage(text, sender) {
+            const container = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.className = sender === 'user' ? 'flex justify-end' : 'flex justify-start';
+            
+            const bubble = document.createElement('div');
+            // Styling based on sender
+            if (sender === 'user') {
+                bubble.className = 'bg-indigo-600 text-white rounded-lg rounded-tr-none p-3 text-sm max-w-[85%]';
+            } else {
+                bubble.className = 'bg-gray-800 text-gray-200 rounded-lg rounded-tl-none p-3 text-sm max-w-[85%] border border-gray-700';
+            }
+            
+            bubble.innerHTML = text.replace(/\n/g, '<br>');
+            div.appendChild(bubble);
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const container = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.id = 'typing-indicator';
+            div.className = 'flex justify-start';
+            div.innerHTML = `
+                <div class="bg-gray-800 rounded-lg rounded-tl-none p-4 text-sm border border-gray-700 flex space-x-1">
+                    <div class="w-2 h-2 bg-gray-500 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-gray-500 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-gray-500 rounded-full typing-dot"></div>
+                </div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const el = document.getElementById('typing-indicator');
+            if (el) el.remove();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            input.value = '';
+            appendMessage(message, 'user');
+            showTypingIndicator();
+
+            // Prepare history for context
+            const contextMessages = [
+                ...messages.slice(-5), // Keep last 5 messages for context
+                { "role": "user", "content": message }
+            ];
+
+            try {
+                // Fetch from YOUR internal Vercel API, not OpenRouter directly
+                const response = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        messages: contextMessages
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                let aiText = "Sorry, I couldn't understand the response.";
+                if (data.choices && data.choices.length > 0) {
+                    aiText = data.choices[0].message.content;
+                }
+
+                // Add to history
+                messages.push({ "role": "user", "content": message });
+                messages.push({ "role": "assistant", "content": aiText });
+
+                removeTypingIndicator();
+                appendMessage(aiText, 'ai');
+
+            } catch (error) {
+                removeTypingIndicator();
+                console.error(error);
+                appendMessage("Error: Could not connect to AI. Please try again later.", 'ai');
+            }
+        }
+
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
             const statuses = loadFixStatuses();
-            
-            // Apply initial states
             Object.keys(statuses).forEach(key => {
                 updateUI(key, statuses[key]);
             });
