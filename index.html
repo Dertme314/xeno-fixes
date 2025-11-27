@@ -432,7 +432,7 @@
 // -----------------------------
 // LOCAL STORAGE FIX TRACKER
 // -----------------------------
-const FIX_KEYS = ['fix-1', 'fix-2', 'fix-3', 'fix-4', 'fix-5', 'fix-6', 'fix-7'];
+const FIX_KEYS = ['fix-1','fix-2','fix-3','fix-4','fix-5','fix-6','fix-7'];
 
 const loadFixStatuses = () => {
     const statuses = {};
@@ -459,190 +459,158 @@ const updateUI = (fixId, isCompleted) => {
     if (isCompleted) {
         card.classList.add('completed');
         markButton.textContent = 'Status: FIXED! (Click to Reset)';
-        markButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-        markButton.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white');
+        markButton.classList.remove('bg-blue-600','hover:bg-blue-700');
+        markButton.classList.add('bg-green-600','hover:bg-green-700','text-white');
     } else {
         card.classList.remove('completed');
         markButton.textContent = 'Mark as Fixed';
-        markButton.classList.remove('bg-green-600', 'hover:bg-green-700');
-        markButton.classList.add('bg-blue-600', 'hover:bg-blue-700', 'text-white');
+        markButton.classList.remove('bg-green-600','hover:bg-green-700');
+        markButton.classList.add('bg-blue-600','hover:bg-blue-700','text-white');
     }
 };
 
 window.copyToClipboard = (text, btnElement) => {
     navigator.clipboard.writeText(text).then(() => {
         const originalContent = btnElement.innerHTML;
-        btnElement.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" 
-            viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" 
-            stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
-            </svg>`;
-        setTimeout(() => {
-            btnElement.innerHTML = originalContent;
-        }, 2000);
+        btnElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+        setTimeout(()=>{btnElement.innerHTML = originalContent;},2000);
     });
 };
 
 // -----------------------------
-// RAG CONTEXT: READ FIX CARDS
+// RAG: Get fixes context
 // -----------------------------
 function getFixesContext() {
     const fixCards = document.querySelectorAll('.fix-card');
-    let contextString = "WEBSITE FIXES BELOW:\n\n";
-
-    fixCards.forEach((card, index) => {
+    let contextString = "AVAILABLE FIXES ON THIS PAGE:\n\n";
+    fixCards.forEach((card,index)=>{
         const title = card.querySelector('h2').textContent.trim();
         const details = card.querySelector('ul')
-            ? card.querySelector('ul').textContent.trim().replace(/\s\s+/g, ' ')
+            ? card.querySelector('ul').textContent.trim().replace(/\s\s+/g,' ')
             : card.querySelector('p').textContent.trim();
-
-        contextString += `Fix ${index + 1}: ${title}\nDetails: ${details}\n\n`;
+        contextString += `Fix ${index+1}: ${title}\nDetails: ${details}\n\n`;
     });
-
     return contextString;
 }
 
 // -----------------------------
-// CHAT WIDGET LOGIC
+// CHAT WIDGET
 // -----------------------------
-let isChatOpen = false;
-let messages = [];
+let isChatOpen=false;
+let messages=[];
 
-function toggleChat() {
+function toggleChat(){
     isChatOpen = !isChatOpen;
     const chatWindow = document.getElementById('chat-window');
     const iconOpen = document.getElementById('icon-open');
     const iconClose = document.getElementById('icon-close');
 
-    if (isChatOpen) {
-        chatWindow.classList.remove('chat-hidden');
-        chatWindow.classList.add('chat-visible');
-        iconOpen.classList.add('hidden');
-        iconClose.classList.remove('hidden');
+    if(isChatOpen){
+        chatWindow.classList.remove('chat-hidden'); chatWindow.classList.add('chat-visible');
+        iconOpen.classList.add('hidden'); iconClose.classList.remove('hidden');
     } else {
-        chatWindow.classList.remove('chat-visible');
-        chatWindow.classList.add('chat-hidden');
-        iconOpen.classList.remove('hidden');
-        iconClose.classList.add('hidden');
+        chatWindow.classList.remove('chat-visible'); chatWindow.classList.add('chat-hidden');
+        iconOpen.classList.remove('hidden'); iconClose.classList.add('hidden');
     }
 }
 
-function handleEnter(e) {
-    if (e.key === 'Enter') sendMessage();
-}
+function handleEnter(e){if(e.key==='Enter') sendMessage();}
 
-// -----------------------------
-// MESSAGE DISPLAY + MARKDOWN
-// -----------------------------
-function appendMessage(text, sender) {
-    const container = document.getElementById('chat-messages');
-    const div = document.createElement('div');
+// Append messages with Markdown fallback
+function appendMessage(text,sender){
+    const container=document.getElementById('chat-messages');
+    const div=document.createElement('div');
+    div.className=sender==='user'?'flex justify-end':'flex justify-start';
 
-    div.className = sender === 'user'
-        ? 'flex justify-end'
-        : 'flex justify-start';
-
-    const bubble = document.createElement('div');
-
-    if (sender === 'user') {
-        bubble.className = 'bg-indigo-600 text-white rounded-lg rounded-tr-none p-3 text-sm max-w-[85%]';
+    const bubble=document.createElement('div');
+    if(sender==='user'){
+        bubble.className='bg-indigo-600 text-white rounded-lg rounded-tr-none p-3 text-sm max-w-[85%]';
     } else {
-        bubble.className = 'bg-gray-800 text-gray-200 rounded-lg rounded-tl-none p-3 text-sm max-w-[85%] border border-gray-700';
+        bubble.className='bg-gray-800 text-gray-200 rounded-lg rounded-tl-none p-3 text-sm max-w-[85%] border border-gray-700';
     }
 
-    // ⭐ Convert Markdown → HTML
-    bubble.innerHTML = marked.parse(text);
+    // ✅ Fallback if marked is not loaded
+    bubble.innerHTML = (typeof marked !== "undefined") 
+        ? marked.parse(text) 
+        : text.replace(/\n/g,"<br>");
 
     div.appendChild(bubble);
     container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
+    container.scrollTop=container.scrollHeight;
 }
 
-function showTypingIndicator() {
-    const container = document.getElementById('chat-messages');
-    const div = document.createElement('div');
-    div.id = 'typing-indicator';
-    div.className = 'flex justify-start';
-    div.innerHTML = `
+function showTypingIndicator(){
+    const container=document.getElementById('chat-messages');
+    const div=document.createElement('div');
+    div.id='typing-indicator';
+    div.className='flex justify-start';
+    div.innerHTML=`
         <div class="bg-gray-800 rounded-lg rounded-tl-none p-4 text-sm border border-gray-700 flex space-x-1">
             <div class="w-2 h-2 bg-gray-500 rounded-full typing-dot"></div>
             <div class="w-2 h-2 bg-gray-500 rounded-full typing-dot"></div>
             <div class="w-2 h-2 bg-gray-500 rounded-full typing-dot"></div>
-        </div>
-    `;
+        </div>`;
     container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
+    container.scrollTop=container.scrollHeight;
 }
 
-function removeTypingIndicator() {
-    const el = document.getElementById('typing-indicator');
-    if (el) el.remove();
+function removeTypingIndicator(){
+    const el=document.getElementById('typing-indicator');
+    if(el) el.remove();
 }
 
 // -----------------------------
-// SEND MESSAGE (WITH RAG)
+// SEND MESSAGE
 // -----------------------------
-async function sendMessage() {
-    const input = document.getElementById('chat-input');
-    const message = input.value.trim();
-
-    if (!message) return;
-
-    input.value = '';
-    appendMessage(message, 'user');
+async function sendMessage(){
+    const input=document.getElementById('chat-input');
+    const message=input.value.trim();
+    if(!message) return;
+    input.value='';
+    appendMessage(message,'user');
     showTypingIndicator();
 
-    // ⭐ System prompt always updated
     const contextPrompt = {
-        role: "system",
-        content:
-            "You are the built-in support assistant for the Xeno Troubleshooting Website. " +
-            "Your job is to help users fix Xeno errors, explain fixes, and guide them. " +
-            "Use the website's fix list below to answer questions. " +
-            "Always reference a fix if relevant.\n\n" +
-            getFixesContext()
+        role:"system",
+        content:"You are a helpful support assistant for Xeno. "+
+                "Use the fixes below to answer questions:\n\n"+getFixesContext()
     };
 
-    const contextMessages = [
-        contextPrompt,
-        ...messages.slice(-5),
-        { role: "user", content: message }
-    ];
+    const contextMessages=[contextPrompt,...messages.slice(-5),{role:"user",content:message}];
 
-    try {
-        const response = await fetch("/api/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ messages: contextMessages })
+    try{
+        const response=await fetch("/api/chat",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({messages:contextMessages})
         });
 
-        if (!response.ok) throw new Error(`API Error: ${response.status}`);
+        if(!response.ok){
+            throw new Error(`API Error: ${response.status}`);
+        }
 
-        const data = await response.json();
-        let aiText = data?.choices?.[0]?.message?.content || "Error: Empty response.";
+        const data=await response.json();
+        const aiText=data?.choices?.[0]?.message?.content || "Sorry, I couldn't understand the response.";
 
-        messages.push({ role: "user", content: message });
-        messages.push({ role: "assistant", content: aiText });
+        messages.push({role:"user",content:message});
+        messages.push({role:"assistant",content:aiText});
 
         removeTypingIndicator();
-        appendMessage(aiText, 'ai');
+        appendMessage(aiText,'ai');
 
-    } catch (err) {
+    }catch(err){
         console.error(err);
         removeTypingIndicator();
-        appendMessage("Error: Could not connect to the AI server.", 'ai');
+        appendMessage("Error: Could not connect to AI. "+err.message,'ai');
     }
 }
 
 // -----------------------------
 // INIT
 // -----------------------------
-document.addEventListener('DOMContentLoaded', () => {
-    const statuses = loadFixStatuses();
-    Object.keys(statuses).forEach(key => {
-        updateUI(key, statuses[key]);
-    });
+document.addEventListener('DOMContentLoaded',()=>{
+    const statuses=loadFixStatuses();
+    Object.keys(statuses).forEach(key=>updateUI(key,statuses[key]));
 });
 </script>
 
