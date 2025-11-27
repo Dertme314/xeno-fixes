@@ -432,14 +432,14 @@
 
 <script>
 // -----------------------------
-// Full AI Chat Script (CSP-safe, Markdown + Preloaded Fixes)
+// Full AI Chat Script (CSP-safe, Markdown + Explicit Fixes)
 // -----------------------------
 
 let messages = [];
 let isChatOpen = false;
 
 // -----------------------------
-// Preloaded Xeno Fixes (Markdown-Formatted)
+// Preloaded Xeno Fixes (Explicit Markdown-Formatted)
 // -----------------------------
 const fixesContext = `
 # Common Xeno Fixes
@@ -448,9 +448,9 @@ const fixesContext = `
 
 ## 1. Xeno Not Opening
 
-**Install Dependencies (Most Common Fix):**
-- **[Microsoft Webview2](https://developer.microsoft.com/en-us/microsoft-edge/webview2)** – Required for the UI.
-- **[.NET Runtime 8.0.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)** – x64 version.
+**Install Dependencies:**
+- **[Microsoft Webview2](https://developer.microsoft.com/en-us/microsoft-edge/webview2)** → Download and install.
+- **[.NET Runtime 8.0.0 (x64)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)** → Download and install.
 
 **Steps:**
 1. Install Webview2 first, then .NET Runtime.
@@ -464,10 +464,10 @@ const fixesContext = `
 **Cause:** Security software interference or missing C++ dependencies.  
 
 **Fix:**
-- Install **Visual C++ Redistributable (x64)**.
-- Temporarily disable antivirus/firewall.
+- Install **[Visual C++ Redistributable (x64)](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)**.
 - Add the Xeno installation folder to antivirus exclusions.
-- Make sure both Xeno and Roblox are fully closed before launching Xeno.
+- Temporarily disable antivirus/firewall if necessary.
+- Ensure both Xeno and Roblox are fully closed before launching Xeno.
 
 ---
 
@@ -476,8 +476,7 @@ const fixesContext = `
 **Cause:** Roblox recently updated; Xeno requires specific client versions.  
 
 **Fix:**
-- Download **[Roblox Downgrader](#)**.
-- Run the utility to install the last compatible version.
+- Download **[Roblox Downgrader](#)** → Install the last compatible version.
 - Launch the downgraded \`RobloxPlayerBeta.exe\` from the folder you installed.
 
 ---
@@ -506,7 +505,7 @@ const fixesContext = `
 ## 6. Need Scripts?
 
 **Fix:**
-- Visit [ScriptBlox](https://scriptblox.com) for reliable and current scripts.
+- Visit [ScriptBlox](https://scriptblox.com) for reliable, current scripts.
 
 ---
 
@@ -644,7 +643,6 @@ async function sendMessage() {
         appendMessage("Error: Could not connect to AI. " + err.message, 'ai');
     }
 }
-
 
 </script>
 </body>
