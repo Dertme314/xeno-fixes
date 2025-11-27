@@ -432,20 +432,16 @@
 
 <script>
 // -----------------------------
-// Full AI Chat Script (CSP-safe, Markdown + Flattened Objects)
+// Full AI Chat Script (Hardened Link Handling with FULL Context)
 // -----------------------------
 
 let messages = [];
 let isChatOpen = false;
 
 // -----------------------------
-// Preloaded Xeno Fixes (CONTENT KEPT EXACTLY THE SAME)
+// Preloaded Xeno Fixes (COMPLETE LIST AS PROVIDED)
 // -----------------------------
 const fixesContext = `
-# Common Xeno Fixes
-
----
-
 ## 1. Xeno Not Opening
 
 **Install Dependencies:**
@@ -463,30 +459,30 @@ const fixesContext = `
 
 **Steps:**
 1. Install Visual C++ Redistributable (x64):
-   - Download: https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist
-   - Run installer.
+   - Download: https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist
+   - Run installer.
 
 2. Add Xeno to Antivirus Exclusions:
-   - Example paths:
-     C:\\Program Files\\Xeno
-     C:\\Users\\<YourName>\\Downloads\\Xeno
+   - Example paths:
+     C:\\Program Files\\Xeno
+     C:\\Users\\<YourName>\\Downloads\\Xeno
 
 3. Temporarily Disable Security Software:
-   - Turn off antivirus/firewall before launching Xeno, re-enable after injection.
+   - Turn off antivirus/firewall before launching Xeno, re-enable after injection.
 
 4. Close Roblox/Xeno Properly:
-   - Ensure both Roblox and Xeno are fully exited before relaunching.
+   - Ensure both Roblox and Xeno are fully exited before relaunching.
 
 ---
 
 ## 3. Version Mismatch / Crash
 
-- Download Roblox Downgrader → Install last compatible version.
+- Download Roblox Downgrader [rdd.weao.gg] Install last compatible version.
 - Launch the downgraded RobloxPlayerBeta.exe.
 
 ---
 
-## 4. Corrupted Cache Error
+## 4. JSON Error
 
 1. Press Win + R → type %localappdata%/xeno
 2. Delete the entire Xeno folder.
@@ -532,44 +528,25 @@ function toggleChat() {
     }
 }
 
-// -----------------------------
-// Enter key handler
-// -----------------------------
 function handleEnter(e) {
     if (e.key === 'Enter') sendMessage();
 }
 
 // -----------------------------
-// IMPROVED: Flatten AI Output Objects into Strings
+// Helper: Flatten Object to String (Prevents [object Object] and undefined)
 // -----------------------------
 function flattenAIOutput(aiOutput) {
-    // 1. CATCH UNDEFINED/NULL EARLY
     if (aiOutput === null || aiOutput === undefined) return "";
-
-    // 2. Return strings as-is
     if (typeof aiOutput === 'string') return aiOutput;
-
-    // 3. Join Arrays
-    if (Array.isArray(aiOutput)) {
-        return aiOutput.map(flattenAIOutput).join("\n");
-    }
-
-    // 4. AGGRESSIVE OBJECT FLATTENING
-    // Instead of looking for specific keys like "text" or "url", 
-    // we grab ALL values. This fixes { step: "..." } or { instruction: "..." }
+    if (Array.isArray(aiOutput)) return aiOutput.map(flattenAIOutput).join("\n");
     if (typeof aiOutput === 'object') {
-        return Object.values(aiOutput)
-            .map(val => flattenAIOutput(val))
-            .join("\n")
-            .trim();
+        return Object.values(aiOutput).map(flattenAIOutput).join("\n");
     }
-
-    // 5. Fallback for numbers/booleans
     return String(aiOutput);
 }
 
 // -----------------------------
-// Append Message (User or AI)
+// Append Message (With Link Protection)
 // -----------------------------
 function appendMessage(text, sender) {
     const container = document.getElementById('chat-messages');
@@ -581,20 +558,41 @@ function appendMessage(text, sender) {
         ? 'bg-indigo-600 text-white rounded-lg rounded-tr-none p-3 text-sm max-w-[85%]'
         : 'bg-gray-800 text-gray-200 rounded-lg rounded-tl-none p-3 text-sm max-w-[85%] border border-gray-700';
 
-    // Apply flattening before rendering
+    // 1. Flatten content
     let textString = flattenAIOutput(text);
+
+    // 2. Final Sanitize: Remove literal "undefined" or "[object Object]" text if it leaked
+    textString = textString.replace(/undefined/g, "").replace(/\[object Object\]/g, "");
 
     try {
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
-            renderer.link = (href, title, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+
+            // SAFE LINK RENDERER: Fixes the "xeno-fixes.vercel.app/[object Object]" bug
+            renderer.link = (href, title, text) => {
+                let cleanHref = String(href).trim();
+
+                // If the link is "undefined", "null", or looks like an object, DISABLE the link.
+                if (!cleanHref || 
+                     cleanHref === "undefined" || 
+                     cleanHref === "null" || 
+                     cleanHref.includes("[object Object]")) {
+                    // Render as bold text instead of a broken link
+                    return `<strong>${text}</strong>`; 
+                }
+
+                // Render valid absolute URL link
+                return `<a href="${cleanHref}" target="_blank" rel="noopener noreferrer" style="color: #60a5fa; text-decoration: underline;">${text}</a>`;
+            };
+
             bubble.innerHTML = marked.parse(textString, { renderer });
         } else {
-            bubble.innerHTML = `<pre style="white-space: pre-wrap;">${textString}</pre>`;
+            // Fallback if marked.js isn't loaded
+            bubble.innerHTML = `<pre style="white-space: pre-wrap; font-family: inherit;">${textString}</pre>`;
         }
     } catch (err) {
-        console.error("Markdown parse error:", err);
-        bubble.innerHTML = `<pre style="white-space: pre-wrap;">${textString}</pre>`;
+        console.error("Markdown error:", err);
+        bubble.textContent = textString;
     }
 
     div.appendChild(bubble);
@@ -603,7 +601,7 @@ function appendMessage(text, sender) {
 }
 
 // -----------------------------
-// Typing Indicator
+// Typing Indicators
 // -----------------------------
 function showTypingIndicator() {
     const container = document.getElementById('chat-messages');
@@ -626,7 +624,7 @@ function removeTypingIndicator() {
 }
 
 // -----------------------------
-// Send Message to AI
+// Send Message
 // -----------------------------
 async function sendMessage() {
     const input = document.getElementById('chat-input');
@@ -637,19 +635,22 @@ async function sendMessage() {
     appendMessage(message, 'user');
     showTypingIndicator();
 
-    // ---------------------------------------------------------
-    // SYSTEM INSTRUCTION UPDATE:
-    // We add a strict rule to the system prompt to prevent JSON.
-    // ---------------------------------------------------------
-    const systemPrompt = "You are a helpful Xeno support assistant.\n" +
-        "IMPORTANT RULES:\n" +
-        "1. Do NOT output JSON objects. Output only standard text or Markdown.\n" +
-        "2. Do NOT use placeholders like [Link]. Use the exact URLs from the context below.\n" +
-        "3. Use the following fixes as your knowledge base:\n\n" + 
-        fixesContext;
-
+    // -----------------------------------------------------------
+    // SYSTEM PROMPT: Includes strict rules and full context
+    // -----------------------------------------------------------
     const contextMessages = [
-        { role: "system", content: systemPrompt },
+        { 
+            role: "system", 
+            content: `You are a helpful assistant. 
+            RULES: 
+            1. Output PLAIN MARKDOWN only. 
+            2. Do NOT use JSON or object structures. 
+            3. Do NOT use variables for links. 
+            4. If you share a link, write it out fully, e.g., [Click Me](https://example.com).
+            
+            CONTEXT:
+            ${fixesContext}`
+        },
         ...messages.slice(-5),
         { role: "user", content: message }
     ];
@@ -666,10 +667,10 @@ async function sendMessage() {
         const data = await response.json();
         let aiText = data?.choices?.[0]?.message?.content;
 
-        // Ensure we flatten immediately upon receipt
+        // Flatten immediately for safety
         aiText = flattenAIOutput(aiText);
 
-        if (!aiText) aiText = "Sorry, I couldn't find a response for that.";
+        if (!aiText) aiText = "Please try again.";
 
         messages.push({ role: "user", content: message });
         messages.push({ role: "assistant", content: aiText });
@@ -680,7 +681,7 @@ async function sendMessage() {
     } catch(err) {
         console.error(err);
         removeTypingIndicator();
-        appendMessage("Error: Could not connect to AI. " + err.message, 'ai');
+        appendMessage("Error connecting to support.", 'ai');
     }
 }
 
