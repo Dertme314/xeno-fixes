@@ -427,10 +427,12 @@
             <svg id="icon-close" class="hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
     </div>
+    
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <script>
 // -----------------------------
-// Full AI Chat Script with Preloaded Fixes and Markdown Rendering
+// Full AI Chat Script (CSP-safe, Markdown enabled)
 // -----------------------------
 
 let messages = [];
@@ -522,10 +524,20 @@ function appendMessage(text, sender) {
         ? 'bg-indigo-600 text-white rounded-lg rounded-tr-none p-3 text-sm max-w-[85%]'
         : 'bg-gray-800 text-gray-200 rounded-lg rounded-tl-none p-3 text-sm max-w-[85%] border border-gray-700';
 
-    // Render Markdown with marked.js
-    if (typeof marked !== 'undefined') {
-        bubble.innerHTML = marked.parse(text);
-    } else {
+    try {
+        // CSP-safe Markdown rendering
+        if (typeof marked !== 'undefined') {
+            // Custom renderer for safe links
+            const renderer = new marked.Renderer();
+            renderer.link = (href, title, text) => {
+                return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+            };
+            bubble.innerHTML = marked.parse(text, { renderer });
+        } else {
+            bubble.innerHTML = text.replace(/\n/g, '<br>');
+        }
+    } catch (err) {
+        console.error("Markdown parse error:", err);
         bubble.innerHTML = text.replace(/\n/g, '<br>');
     }
 
@@ -569,7 +581,6 @@ async function sendMessage() {
     appendMessage(message, 'user');
     showTypingIndicator();
 
-    // Prepare messages with system prompt
     const contextMessages = [
         { role: "system", content: "You are a helpful support assistant for Xeno. Use the following fixes to answer user questions:\n\n" + fixesContext },
         ...messages.slice(-5),
