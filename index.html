@@ -432,7 +432,7 @@
 
 <script>
 // -----------------------------
-// Full AI Chat Script (CSP-safe, Markdown + Explicit Fixes)
+// Full AI Chat Script (CSP-safe, Markdown + Explicit Fixes + Object Handling)
 // -----------------------------
 
 let messages = [];
@@ -461,11 +461,8 @@ const fixesContext = `
 
 ## 2. "Failed to Attach" Error
 
-**Cause:** Security software interference or missing C++ dependencies.  
-
-**Fix:**
 - Install **[Visual C++ Redistributable (x64)](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)**.
-- Add the Xeno installation folder to antivirus exclusions.
+- Add Xeno folder to antivirus exclusions.
 - Temporarily disable antivirus/firewall if necessary.
 - Ensure both Xeno and Roblox are fully closed before launching Xeno.
 
@@ -473,30 +470,21 @@ const fixesContext = `
 
 ## 3. Version Mismatch / Crash
 
-**Cause:** Roblox recently updated; Xeno requires specific client versions.  
-
-**Fix:**
-- Download **[Roblox Downgrader](#)** → Install the last compatible version.
-- Launch the downgraded \`RobloxPlayerBeta.exe\` from the folder you installed.
+- Download **[Roblox Downgrader](#)** → Install last compatible version.
+- Launch the downgraded \`RobloxPlayerBeta.exe\`.
 
 ---
 
 ## 4. Corrupted Cache Error
 
-**Cause:** "Error Parsing Clients JSON" or corrupted installation.  
-
-**Fix:**
 1. Press \`Win + R\`, type \`%localappdata%/xeno\`.
 2. Delete the entire \`Xeno\` folder.
-3. Reinstall Xeno from the official site.
+3. Reinstall Xeno from official site.
 
 ---
 
 ## 5. Official Site Blocked
 
-**Cause:** ISP blocks main download source.  
-
-**Fix:**
 - Mirror: [x3no.pages.dev](https://x3no.pages.dev)
 - Web Proxy: [Proxyium](https://proxyium.com)
 
@@ -504,20 +492,15 @@ const fixesContext = `
 
 ## 6. Need Scripts?
 
-**Fix:**
 - Visit [ScriptBlox](https://scriptblox.com) for reliable, current scripts.
 
 ---
 
 ## 7. Tabs Saying "null"
 
-**Cause:** Tab configuration files are corrupted.  
-
-**Fix:**
-1. Press \`Win + R\` to open Run.
-2. Type \`%localappdata%/xeno/tabs\`.
-3. Delete everything inside this folder.
-4. Restart Xeno.
+1. Press \`Win + R\`, type \`%localappdata%/xeno/tabs\`.
+2. Delete everything inside.
+3. Restart Xeno.
 `;
 
 // -----------------------------
@@ -558,19 +541,29 @@ function appendMessage(text, sender) {
         ? 'bg-indigo-600 text-white rounded-lg rounded-tr-none p-3 text-sm max-w-[85%]'
         : 'bg-gray-800 text-gray-200 rounded-lg rounded-tl-none p-3 text-sm max-w-[85%] border border-gray-700';
 
+    // ----------------------
+    // Force all output to string
+    // ----------------------
+    let textString;
+    if (typeof text === 'object') {
+        textString = JSON.stringify(text, null, 2);
+    } else {
+        textString = String(text);
+    }
+
     try {
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
             renderer.link = (href, title, text) => {
                 return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
             };
-            bubble.innerHTML = `<pre style="white-space: pre-wrap;">${marked.parse(text, { renderer })}</pre>`;
+            bubble.innerHTML = marked.parse(textString, { renderer });
         } else {
-            bubble.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>`;
+            bubble.innerHTML = `<pre style="white-space: pre-wrap;">${textString}</pre>`;
         }
     } catch (err) {
         console.error("Markdown parse error:", err);
-        bubble.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>`;
+        bubble.innerHTML = `<pre style="white-space: pre-wrap;">${textString}</pre>`;
     }
 
     div.appendChild(bubble);
@@ -629,7 +622,13 @@ async function sendMessage() {
         if (!response.ok) throw new Error(`API Error: ${response.status}`);
 
         const data = await response.json();
-        const aiText = data?.choices?.[0]?.message?.content || "Sorry, I couldn't understand the response.";
+        let aiText = data?.choices?.[0]?.message?.content;
+
+        // ----------------------
+        // Force string conversion here too
+        // ----------------------
+        if (!aiText) aiText = "Sorry, I couldn't understand the response.";
+        else if (typeof aiText !== 'string') aiText = JSON.stringify(aiText, null, 2);
 
         messages.push({ role: "user", content: message });
         messages.push({ role: "assistant", content: aiText });
@@ -643,6 +642,7 @@ async function sendMessage() {
         appendMessage("Error: Could not connect to AI. " + err.message, 'ai');
     }
 }
+
 
 </script>
 </body>
