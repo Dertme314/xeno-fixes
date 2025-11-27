@@ -432,14 +432,14 @@
 
 <script>
 // -----------------------------
-// Full AI Chat Script (CSP-safe, Markdown + Explicit Fixes + Object Handling)
+// Full AI Chat Script (CSP-safe, Markdown + Flattened Objects)
 // -----------------------------
 
 let messages = [];
 let isChatOpen = false;
 
 // -----------------------------
-// Preloaded Xeno Fixes (Explicit Markdown-Formatted)
+// Preloaded Xeno Fixes (Explicit Markdown)
 // -----------------------------
 const fixesContext = `
 # Common Xeno Fixes
@@ -449,8 +449,8 @@ const fixesContext = `
 ## 1. Xeno Not Opening
 
 **Install Dependencies:**
-- **[Microsoft Webview2](https://developer.microsoft.com/en-us/microsoft-edge/webview2)** → Download and install.
-- **[.NET Runtime 8.0.0 (x64)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)** → Download and install.
+- [Microsoft Webview2](https://developer.microsoft.com/en-us/microsoft-edge/webview2) → Download and install.
+- [.NET Runtime 8.0.0 (x64)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) → Download and install.
 
 **Steps:**
 1. Install Webview2 first, then .NET Runtime.
@@ -461,25 +461,36 @@ const fixesContext = `
 
 ## 2. "Failed to Attach" Error
 
-- Install **[Visual C++ Redistributable (x64)](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)**.
-- Add Xeno folder to antivirus exclusions.
-- Temporarily disable antivirus/firewall if necessary.
-- Ensure both Xeno and Roblox are fully closed before launching Xeno.
+**Steps:**
+1. Install Visual C++ Redistributable (x64):
+   - Download: https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist
+   - Run installer.
+
+2. Add Xeno to Antivirus Exclusions:
+   - Example paths:
+     C:\\Program Files\\Xeno
+     C:\\Users\\<YourName>\\Downloads\\Xeno
+
+3. Temporarily Disable Security Software:
+   - Turn off antivirus/firewall before launching Xeno, re-enable after injection.
+
+4. Close Roblox/Xeno Properly:
+   - Ensure both Roblox and Xeno are fully exited before relaunching.
 
 ---
 
 ## 3. Version Mismatch / Crash
 
-- Download **[Roblox Downgrader](#)** → Install last compatible version.
-- Launch the downgraded \`RobloxPlayerBeta.exe\`.
+- Download Roblox Downgrader → Install last compatible version.
+- Launch the downgraded RobloxPlayerBeta.exe.
 
 ---
 
 ## 4. Corrupted Cache Error
 
-1. Press \`Win + R\`, type \`%localappdata%/xeno\`.
-2. Delete the entire \`Xeno\` folder.
-3. Reinstall Xeno from official site.
+1. Press Win + R → type %localappdata%/xeno
+2. Delete the entire Xeno folder.
+3. Reinstall Xeno.
 
 ---
 
@@ -492,13 +503,13 @@ const fixesContext = `
 
 ## 6. Need Scripts?
 
-- Visit [ScriptBlox](https://scriptblox.com) for reliable, current scripts.
+- Visit [ScriptBlox](https://scriptblox.com)
 
 ---
 
 ## 7. Tabs Saying "null"
 
-1. Press \`Win + R\`, type \`%localappdata%/xeno/tabs\`.
+1. Press Win + R → type %localappdata%/xeno/tabs
 2. Delete everything inside.
 3. Restart Xeno.
 `;
@@ -529,6 +540,31 @@ function handleEnter(e) {
 }
 
 // -----------------------------
+// Flatten AI Output Objects into Strings
+// -----------------------------
+function flattenAIOutput(aiOutput) {
+    if (typeof aiOutput === 'string') return aiOutput;
+
+    if (Array.isArray(aiOutput)) {
+        return aiOutput.map(flattenAIOutput).join("\n");
+    }
+
+    if (typeof aiOutput === 'object' && aiOutput !== null) {
+        let result = "";
+        if (aiOutput.text) result += aiOutput.text + "\n";
+        if (aiOutput.url) result += aiOutput.url + "\n";
+        for (let key in aiOutput) {
+            if (key !== "text" && key !== "url") {
+                result += flattenAIOutput(aiOutput[key]) + "\n";
+            }
+        }
+        return result.trim();
+    }
+
+    return String(aiOutput);
+}
+
+// -----------------------------
 // Append Message (User or AI)
 // -----------------------------
 function appendMessage(text, sender) {
@@ -541,22 +577,12 @@ function appendMessage(text, sender) {
         ? 'bg-indigo-600 text-white rounded-lg rounded-tr-none p-3 text-sm max-w-[85%]'
         : 'bg-gray-800 text-gray-200 rounded-lg rounded-tl-none p-3 text-sm max-w-[85%] border border-gray-700';
 
-    // ----------------------
-    // Force all output to string
-    // ----------------------
-    let textString;
-    if (typeof text === 'object') {
-        textString = JSON.stringify(text, null, 2);
-    } else {
-        textString = String(text);
-    }
+    let textString = flattenAIOutput(text);
 
     try {
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
-            renderer.link = (href, title, text) => {
-                return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-            };
+            renderer.link = (href, title, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
             bubble.innerHTML = marked.parse(textString, { renderer });
         } else {
             bubble.innerHTML = `<pre style="white-space: pre-wrap;">${textString}</pre>`;
@@ -607,7 +633,7 @@ async function sendMessage() {
     showTypingIndicator();
 
     const contextMessages = [
-        { role: "system", content: "You are a helpful support assistant for Xeno. Use the following fixes to answer user questions:\n\n" + fixesContext },
+        { role: "system", content: "You are a helpful Xeno support assistant. Use the following fixes:\n\n" + fixesContext },
         ...messages.slice(-5),
         { role: "user", content: message }
     ];
@@ -624,11 +650,8 @@ async function sendMessage() {
         const data = await response.json();
         let aiText = data?.choices?.[0]?.message?.content;
 
-        // ----------------------
-        // Force string conversion here too
-        // ----------------------
         if (!aiText) aiText = "Sorry, I couldn't understand the response.";
-        else if (typeof aiText !== 'string') aiText = JSON.stringify(aiText, null, 2);
+        else if (typeof aiText !== 'string') aiText = flattenAIOutput(aiText);
 
         messages.push({ role: "user", content: message });
         messages.push({ role: "assistant", content: aiText });
@@ -642,7 +665,6 @@ async function sendMessage() {
         appendMessage("Error: Could not connect to AI. " + err.message, 'ai');
     }
 }
-
 
 </script>
 </body>
