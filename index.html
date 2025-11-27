@@ -496,7 +496,7 @@ function getFixesContext() {
     return contextString;
 }
 
-// --- NEW: MARKDOWN TO HTML CONVERSION FUNCTION ---
+// --- NEW: ROBUST MARKDOWN TO HTML CONVERSION FUNCTION ---
 function markdownToHtml(markdown) {
     let html = markdown;
 
@@ -506,21 +506,37 @@ function markdownToHtml(markdown) {
     // Convert links: [text](url) -> <a href="url" target="_blank" class="text-indigo-400 hover:text-indigo-300">text</a>
     html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="text-indigo-400 hover:text-indigo-300">$1</a>');
 
-    // Convert numbered lists (simple approach for items on new lines):
-    // This is tricky without a full parser, but we can detect "1." at the start of a line and handle it
-    const listRegex = /(\d+\. .*?)(<br>|$)/g;
-    let listItems = [];
-    html = html.replace(listRegex, (match, p1) => {
-        listItems.push(`<li>${p1.trim().substring(p1.indexOf('.') + 1).trim()}</li>`);
-        return '';
-    });
-    if (listItems.length > 0) {
-        html = html.replace(/<br><br>/g, '<br>'); // Clean up extra line breaks from list replacement
-        html = html.trim() + '<ol class="ml-4 mt-2 list-decimal">' + listItems.join('') + '</ol>';
+    // 1. Convert numbered lists (1. Item\n2. Item)
+    // First, replace all line breaks (\n) with a placeholder marker and split the text
+    const lines = html.split('\n');
+    let listOpen = false;
+    let newHtml = '';
+    
+    for (const line of lines) {
+        if (line.match(/^\s*\d+\.\s/)) { // Checks for "1. ", "2. ", etc.
+            if (!listOpen) {
+                newHtml += '<ol class="ml-4 mt-1 list-decimal">';
+                listOpen = true;
+            }
+            // Remove the number and period, then wrap in <li>
+            newHtml += `<li>${line.replace(/^\s*\d+\.\s*/, '').trim()}</li>`;
+        } else {
+            if (listOpen) {
+                newHtml += '</ol>';
+                listOpen = false;
+            }
+            // Convert simple text lines to <p> or <br>
+            newHtml += line.trim() ? `<p>${line.trim()}</p>` : '';
+        }
     }
+    // Close the list if it was open at the end
+    if (listOpen) {
+        newHtml += '</ol>';
+    }
+    html = newHtml;
 
-    // Simple line breaks to <br> for readability for non-list content
-    html = html.replace(/\n/g, '<br>');
+    // Remove any empty <p> tags and clean up spacing
+    html = html.replace(/<p><\/p>/g, '').trim();
 
     return html;
 }
@@ -565,7 +581,6 @@ function appendMessage(text, sender) {
     if (sender === 'user') {
         bubble.className = 'bg-indigo-600 text-white rounded-lg rounded-tr-none p-3 text-sm max-w-[85%]';
     } else {
-        // Updated styling to allow lists/links to display correctly
         bubble.className = 'bg-gray-800 text-gray-200 rounded-lg rounded-tl-none p-3 text-sm max-w-[85%] border border-gray-700';
     }
     
@@ -612,10 +627,10 @@ async function sendMessage() {
     appendMessage(message, 'user');
     showTypingIndicator();
 
-    // 1. CONSTRUCT THE CONTEXT 
+    // 1. CONSTRUCT THE CONTEXT (With new, stricter prompt)
     const contextPrompt = { 
         "role": "system", 
-        "content": "You are a helpful support assistant for Xeno, a Roblox script executor. Your answers must be concise, helpful, and use **Markdown formatting** (like lists and bolding) to ensure clarity. Use the provided fix details to answer the user's questions. If the user asks about a common error, check the 'AVAILABLE FIXES' section below and recommend the most relevant fix from that list, listing the steps clearly. Always reference the fix's title or number if it exists in the list. Do not mention the 'AVAILABLE FIXES ON THIS PAGE' header in your answer.\n\n" + siteFixesContext 
+        "content": "You are a helpful support assistant for Xeno, a Roblox script executor. Your answers must be concise, helpful,  use the information from the 'AVAILABLE FIXES ON THIS PAGE' section below when providing troubleshooting steps.** Only provide general advice if a relevant fix is not listed. Always reference the fix's title or number if it exists in the list. When providing steps, use numbered markdown lists (e.g., 1. Step 1). Do not mention the 'AVAILABLE FIXES' header in your final answer.\n\n" + siteFixesContext 
     };
 
     // Prepare history for API
