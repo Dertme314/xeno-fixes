@@ -432,14 +432,14 @@
 
 <script>
 // -----------------------------
-// Full AI Chat Script (CSP-safe, Markdown enabled)
+// Full AI Chat Script (CSP-safe, Markdown + Preloaded Fixes)
 // -----------------------------
 
 let messages = [];
 let isChatOpen = false;
 
 // -----------------------------
-// Preloaded Xeno Fixes
+// Preloaded Xeno Fixes (Markdown-Formatted)
 // -----------------------------
 const fixesContext = `
 # Common Xeno Fixes
@@ -478,7 +478,7 @@ const fixesContext = `
 **Fix:**
 - Download **[Roblox Downgrader](#)**.
 - Run the utility to install the last compatible version.
-- Launch the downgraded `RobloxPlayerBeta.exe` from the folder you installed.
+- Launch the downgraded \`RobloxPlayerBeta.exe\` from the folder you installed.
 
 ---
 
@@ -487,8 +487,8 @@ const fixesContext = `
 **Cause:** "Error Parsing Clients JSON" or corrupted installation.  
 
 **Fix:**
-1. Press 'Win + R`, type '%localappdata%/xeno`.
-2. Delete the entire `Xeno` folder.
+1. Press \`Win + R\`, type \`%localappdata%/xeno\`.
+2. Delete the entire \`Xeno\` folder.
 3. Reinstall Xeno from the official site.
 
 ---
@@ -515,8 +515,8 @@ const fixesContext = `
 **Cause:** Tab configuration files are corrupted.  
 
 **Fix:**
-1. Press `Win + R` to open Run.
-2. Type `%localappdata%/xeno/tabs`.
+1. Press \`Win + R\` to open Run.
+2. Type \`%localappdata%/xeno/tabs\`.
 3. Delete everything inside this folder.
 4. Restart Xeno.
 `;
@@ -560,20 +560,18 @@ function appendMessage(text, sender) {
         : 'bg-gray-800 text-gray-200 rounded-lg rounded-tl-none p-3 text-sm max-w-[85%] border border-gray-700';
 
     try {
-        // CSP-safe Markdown rendering
         if (typeof marked !== 'undefined') {
-            // Custom renderer for safe links
             const renderer = new marked.Renderer();
             renderer.link = (href, title, text) => {
                 return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
             };
-            bubble.innerHTML = marked.parse(text, { renderer });
+            bubble.innerHTML = `<pre style="white-space: pre-wrap;">${marked.parse(text, { renderer })}</pre>`;
         } else {
-            bubble.innerHTML = text.replace(/\n/g, '<br>');
+            bubble.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>`;
         }
     } catch (err) {
         console.error("Markdown parse error:", err);
-        bubble.innerHTML = text.replace(/\n/g, '<br>');
+        bubble.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>`;
     }
 
     div.appendChild(bubble);
@@ -646,6 +644,7 @@ async function sendMessage() {
         appendMessage("Error: Could not connect to AI. " + err.message, 'ai');
     }
 }
+
 
 </script>
 </body>
