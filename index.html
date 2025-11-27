@@ -428,8 +428,10 @@
         </button>
     </div>
 
-    <script>
-// --- LOCAL STORAGE DATA HANDLING (Fix Tracker) ---
+<script>
+// -----------------------------
+// LOCAL STORAGE FIX TRACKER
+// -----------------------------
 const FIX_KEYS = ['fix-1', 'fix-2', 'fix-3', 'fix-4', 'fix-5', 'fix-6', 'fix-7'];
 
 const loadFixStatuses = () => {
@@ -450,7 +452,6 @@ window.toggleFixStatus = (fixId) => {
 const updateUI = (fixId, isCompleted) => {
     const card = document.getElementById(fixId);
     const trackerContainer = document.getElementById(`tracker-${fixId}`);
-    
     if (!card || !trackerContainer) return;
 
     const markButton = trackerContainer.querySelector('.mark-button');
@@ -471,45 +472,49 @@ const updateUI = (fixId, isCompleted) => {
 window.copyToClipboard = (text, btnElement) => {
     navigator.clipboard.writeText(text).then(() => {
         const originalContent = btnElement.innerHTML;
-        btnElement.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+        btnElement.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" 
+            viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" 
+            stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+            </svg>`;
         setTimeout(() => {
             btnElement.innerHTML = originalContent;
         }, 2000);
-    }).catch(err => {
-        console.error('Failed to copy text: ', err);
     });
 };
 
-// --- RAG CONTEXT FUNCTION (NEW) ---
+// -----------------------------
+// RAG CONTEXT: READ FIX CARDS
+// -----------------------------
 function getFixesContext() {
     const fixCards = document.querySelectorAll('.fix-card');
-    let contextString = "AVAILABLE FIXES ON THIS PAGE:\n---\n";
+    let contextString = "WEBSITE FIXES BELOW:\n\n";
 
-    // Loop through each fix card to extract title and details
     fixCards.forEach((card, index) => {
         const title = card.querySelector('h2').textContent.trim();
-        // This attempts to get the text from <ul> or fallback to the main <p> tag
-        const details = card.querySelector('ul') ? card.querySelector('ul').textContent.trim().replace(/\s\s+/g, ' ') : card.querySelector('p').textContent.trim();
-        
+        const details = card.querySelector('ul')
+            ? card.querySelector('ul').textContent.trim().replace(/\s\s+/g, ' ')
+            : card.querySelector('p').textContent.trim();
+
         contextString += `Fix ${index + 1}: ${title}\nDetails: ${details}\n\n`;
     });
-    
-    contextString += "---\n";
+
     return contextString;
 }
 
-
-// --- AI CHAT WIDGET LOGIC ---
+// -----------------------------
+// CHAT WIDGET LOGIC
+// -----------------------------
 let isChatOpen = false;
 let messages = [];
-let siteFixesContext = getFixesContext(); // Get the fix data once when script loads
 
 function toggleChat() {
     isChatOpen = !isChatOpen;
     const chatWindow = document.getElementById('chat-window');
     const iconOpen = document.getElementById('icon-open');
     const iconClose = document.getElementById('icon-close');
-    
+
     if (isChatOpen) {
         chatWindow.classList.remove('chat-hidden');
         chatWindow.classList.add('chat-visible');
@@ -527,20 +532,28 @@ function handleEnter(e) {
     if (e.key === 'Enter') sendMessage();
 }
 
+// -----------------------------
+// MESSAGE DISPLAY + MARKDOWN
+// -----------------------------
 function appendMessage(text, sender) {
     const container = document.getElementById('chat-messages');
     const div = document.createElement('div');
-    div.className = sender === 'user' ? 'flex justify-end' : 'flex justify-start';
-    
+
+    div.className = sender === 'user'
+        ? 'flex justify-end'
+        : 'flex justify-start';
+
     const bubble = document.createElement('div');
-    // Styling based on sender
+
     if (sender === 'user') {
         bubble.className = 'bg-indigo-600 text-white rounded-lg rounded-tr-none p-3 text-sm max-w-[85%]';
     } else {
         bubble.className = 'bg-gray-800 text-gray-200 rounded-lg rounded-tl-none p-3 text-sm max-w-[85%] border border-gray-700';
     }
-    
-    bubble.innerHTML = text.replace(/\n/g, '<br>');
+
+    // ⭐ Convert Markdown → HTML
+    bubble.innerHTML = marked.parse(text);
+
     div.appendChild(bubble);
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
@@ -567,7 +580,9 @@ function removeTypingIndicator() {
     if (el) el.remove();
 }
 
-// --- UPDATED SEND MESSAGE FUNCTION (RAG IMPLEMENTATION) ---
+// -----------------------------
+// SEND MESSAGE (WITH RAG)
+// -----------------------------
 async function sendMessage() {
     const input = document.getElementById('chat-input');
     const message = input.value.trim();
@@ -578,65 +593,58 @@ async function sendMessage() {
     appendMessage(message, 'user');
     showTypingIndicator();
 
-    // 1. CONSTRUCT THE CONTEXT
-    // This message is injected first to guide the AI with the page's fix details.
-    const contextPrompt = { 
-        "role": "system", 
-        "content": "You are a helpful support assistant for Xeno, a Roblox script executor. Use the provided fix details to answer the user's questions. If the user asks about a common error, check the 'AVAILABLE FIXES' section below and recommend the most relevant fix from that list. Always reference the fix's title or number if it exists in the list. Do not mention the 'AVAILABLE FIXES ON THIS PAGE' header in your answer.\n\n" + siteFixesContext 
+    // ⭐ System prompt always updated
+    const contextPrompt = {
+        role: "system",
+        content:
+            "You are the built-in support assistant for the Xeno Troubleshooting Website. " +
+            "Your job is to help users fix Xeno errors, explain fixes, and guide them. " +
+            "Use the website's fix list below to answer questions. " +
+            "Always reference a fix if relevant.\n\n" +
+            getFixesContext()
     };
 
-    // Prepare history for API (contextPrompt + recent history + new user message)
     const contextMessages = [
-        contextPrompt,              // Send the fixes list first
-        ...messages.slice(-5),      // Keep last 5 user/AI messages for short-term memory
-        { "role": "user", "content": message }
+        contextPrompt,
+        ...messages.slice(-5),
+        { role: "user", content: message }
     ];
 
     try {
         const response = await fetch("/api/chat", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                messages: contextMessages
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: contextMessages })
         });
 
-        if (!response.ok) {
-            throw new Error(`API Error: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`API Error: ${response.status}`);
 
         const data = await response.json();
-        
-        let aiText = "Sorry, I couldn't understand the response.";
-        if (data.choices && data.choices.length > 0) {
-            aiText = data.choices[0].message.content;
-        }
+        let aiText = data?.choices?.[0]?.message?.content || "Error: Empty response.";
 
-        // Update local history (we only store the user/assistant messages, not the large contextPrompt)
-        messages.push({ "role": "user", "content": message });
-        messages.push({ "role": "assistant", "content": aiText });
+        messages.push({ role: "user", content: message });
+        messages.push({ role: "assistant", content: aiText });
 
         removeTypingIndicator();
         appendMessage(aiText, 'ai');
 
-    } catch (error) {
+    } catch (err) {
+        console.error(err);
         removeTypingIndicator();
-        console.error(error);
-        appendMessage("Error: Could not connect to AI. Please try again later.", 'ai');
+        appendMessage("Error: Could not connect to the AI server.", 'ai');
     }
 }
 
-// --- INITIALIZATION ---
+// -----------------------------
+// INIT
+// -----------------------------
 document.addEventListener('DOMContentLoaded', () => {
     const statuses = loadFixStatuses();
     Object.keys(statuses).forEach(key => {
         updateUI(key, statuses[key]);
     });
 });
-
-    </script>
+</script>
 
 </body>
 </html>
