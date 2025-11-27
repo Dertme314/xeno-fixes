@@ -432,21 +432,21 @@
 
 <script>
 // -----------------------------
-// Full AI Chat Script (Hardened Link Handling with FULL Context)
+// Full AI Chat Script (Finalized)
 // -----------------------------
 
 let messages = [];
 let isChatOpen = false;
 
 // -----------------------------
-// Preloaded Xeno Fixes (COMPLETE LIST AS PROVIDED)
+// Preloaded Xeno Fixes (CONTEXT UNCHANGED)
 // -----------------------------
 const fixesContext = `
 ## 1. Xeno Not Opening
 
 **Install Dependencies:**
-- Microsoft Webview2 https://developer.microsoft.com/en-us/microsoft-edge/webview2  Download and install.
-- .NET Runtime x64 https://dotnet.microsoft.com/en-us/download/dotnet/8.0  Download and install.
+- [Microsoft Webview2](https://developer.microsoft.com/en-us/microsoft-edge/webview2) → Download and install.
+- [.NET Runtime 8.0.0 (x64)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) → Download and install.
 
 **Steps:**
 1. Install Webview2 first, then .NET Runtime.
@@ -477,7 +477,7 @@ const fixesContext = `
 
 ## 3. Version Mismatch / Crash
 
-- Download Roblox Downgrader rdd.weao.gg Install last compatible version.
+- Download Roblox Downgrader [rdd.weao.gg] Install last compatible version.
 - Launch the downgraded RobloxPlayerBeta.exe.
 
 ---
@@ -492,14 +492,14 @@ const fixesContext = `
 
 ## 5. Official Site Blocked
 
-- Mirror: https://x3no.pages.dev
-- Web Proxy: https://proxyium.com
+- Mirror: [x3no.pages.dev](https://x3no.pages.dev)
+- Web Proxy: [Proxyium](https://proxyium.com)
 
 ---
 
 ## 6. Need Scripts?
 
-- Visit https://scriptblox.com
+- Visit [ScriptBlox](https://scriptblox.com)
 
 ---
 
@@ -511,7 +511,7 @@ const fixesContext = `
 `;
 
 // -----------------------------
-// Chat Window Toggle
+// Chat Window Toggle (Unchanged)
 // -----------------------------
 function toggleChat() {
     const chatWindow = document.getElementById('chat-window');
@@ -533,7 +533,7 @@ function handleEnter(e) {
 }
 
 // -----------------------------
-// Helper: Flatten Object to String (Prevents [object Object] and undefined)
+// Helper: Flatten Object to String (ANTI-OBJECT/UNDEFINED LOGIC)
 // -----------------------------
 function flattenAIOutput(aiOutput) {
     if (aiOutput === null || aiOutput === undefined) return "";
@@ -546,7 +546,7 @@ function flattenAIOutput(aiOutput) {
 }
 
 // -----------------------------
-// Append Message (With Link Protection)
+// Append Message (LINK PROTECTION LOGIC)
 // -----------------------------
 function appendMessage(text, sender) {
     const container = document.getElementById('chat-messages');
@@ -568,16 +568,15 @@ function appendMessage(text, sender) {
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
 
-            // SAFE LINK RENDERER: Fixes the "xeno-fixes.vercel.app/[object Object]" bug
+            // SAFE LINK RENDERER: Prevents broken links from being rendered
             renderer.link = (href, title, text) => {
                 let cleanHref = String(href).trim();
 
-                // If the link is "undefined", "null", or looks like an object, DISABLE the link.
+                // If the link is invalid, DISABLE the link entirely.
                 if (!cleanHref || 
                      cleanHref === "undefined" || 
                      cleanHref === "null" || 
                      cleanHref.includes("[object Object]")) {
-                    // Render as bold text instead of a broken link
                     return `<strong>${text}</strong>`; 
                 }
 
@@ -601,7 +600,7 @@ function appendMessage(text, sender) {
 }
 
 // -----------------------------
-// Typing Indicators
+// Typing Indicators (Unchanged)
 // -----------------------------
 function showTypingIndicator() {
     const container = document.getElementById('chat-messages');
@@ -624,7 +623,7 @@ function removeTypingIndicator() {
 }
 
 // -----------------------------
-// Send Message
+// Send Message (AI INSTRUCTIONS ADJUSTED)
 // -----------------------------
 async function sendMessage() {
     const input = document.getElementById('chat-input');
@@ -636,7 +635,7 @@ async function sendMessage() {
     showTypingIndicator();
 
     // -----------------------------------------------------------
-    // SYSTEM PROMPT: Includes strict rules and full context
+    // SYSTEM PROMPT: STRENGTHENED RULES FOR CLEAN LINKS
     // -----------------------------------------------------------
     const contextMessages = [
         { 
@@ -646,7 +645,7 @@ async function sendMessage() {
             1. Output PLAIN MARKDOWN only. 
             2. Do NOT use JSON or object structures. 
             3. Do NOT use variables for links. 
-            4. If you share a link, write it out fully, e.g., [Click Me](https://example.com).
+            4. **All URLs must be output in the simplest, most direct format possible to ensure clickability.**
             
             CONTEXT:
             ${fixesContext}`
