@@ -30,11 +30,12 @@ export default async function handler(req, res) {
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
+        // Required for OpenRouter logging/tracking
         "HTTP-Referer": "https://xeno.onl", 
         "X-Title": "Xeno Help RAG"
       },
       body: JSON.stringify({
-        model: "tngtech/deepseek-r1t2-chimera:free", // A strong model that is good at following instructions/formatting
+        model: "tngtech/deepseek-r1t2-chimera:free", // A strong model good at instructions/formatting
         messages: fullConversation // Send the full, contextualized conversation
       })
     });
@@ -42,6 +43,7 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok) {
+        // If OpenRouter returns an error (e.g., API key problem, model issue)
         console.error("OpenRouter Error Response:", data);
         throw new Error(data.error?.message || `External API Error: ${response.status}`);
     }
@@ -50,6 +52,7 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error("AI Request Failed:", error);
+    // Send a generic 500 back to the client, but log the specific issue on the server
     return res.status(500).json({ error: `Failed to fetch AI response. Details: ${error.message}` });
   }
 }
