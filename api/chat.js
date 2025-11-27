@@ -1,27 +1,23 @@
 // api/chat.js
-import fetch from 'node-fetch'; 
 
 export default async function handler(req, res) {
-  // Only allow POST requests
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
-  // The 'messages' array now contains the System Prompt (with the fixes) 
-  const fullConversation = req.body.messages; 
-  
-  // Securely retrieves the secret key
-  const apiKey = process.env.API_KEY; 
+  const fullConversation = req.body.messages;
+
+  if (!Array.isArray(fullConversation)) {
+    return res.status(400).json({ error: "Invalid message format." });
+  }
+
+  const apiKey = process.env.API_KEY;
 
   if (!apiKey) {
-    return res.status(500).json({ 
-        error: 'Configuration Error: API_KEY environment variable is not set on the server.',
-        details: 'Check Vercel Settings -> Environment Variables and ensure it is scoped.'
+    return res.status(500).json({
+      error: "API key missing.",
+      details: "Add API_KEY in Vercel > Environment Variables."
     });
-  }
-
-  if (!fullConversation || fullConversation.length === 0) {
-      return res.status(400).json({ error: 'No messages provided.' });
   }
 
   try {
@@ -30,29 +26,36 @@ export default async function handler(req, res) {
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
-        // Required for OpenRouter logging/tracking
-        "HTTP-Referer": "https://xeno.onl", 
+        "Referer": "https://xeno.onl",
         "X-Title": "Xeno Help RAG"
       },
       body: JSON.stringify({
-        model: "tngtech/deepseek-r1t2-chimera:free", // A strong model good at instructions/formatting
-        messages: fullConversation // Send the full, contextualized conversation
+        model: "tngtech/deepseek-r1t2-chimera:free",
+        messages: fullConversation,
+        temperature: 0.7,
+        max_tokens: 500
       })
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-        // If OpenRouter returns an error (e.g., API key problem, model issue)
-        console.error("OpenRouter Error Response:", data);
-        throw new Error(data.error?.message || `External API Error: ${response.status}`);
+      console.error("OpenRouter Error:", data);
+      return res.status(response.status).json({
+        error: data.error || "External API Error"
+      });
     }
 
-    return res.status(200).json(data);
+    // Only return what the frontend actually needs
+    return res.status(200).json({
+      choices: data.choices
+    });
 
-  } catch (error) {
-    console.error("AI Request Failed:", error);
-    // Send a generic 500 back to the client, but log the specific issue on the server
-    return res.status(500).json({ error: `Failed to fetch AI response. Details: ${error.message}` });
+  } catch (err) {
+    console.error("AI Request Failed:", err);
+    return res.status(500).json({
+      error: "Failed to reach AI server.",
+      details: err.message
+    });
   }
 }
