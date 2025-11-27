@@ -442,48 +442,83 @@ let isChatOpen = false;
 // Preloaded Xeno Fixes
 // -----------------------------
 const fixesContext = `
-Common Issues:
+# Common Xeno Fixes
 
-1. Xeno not opening
-- You do not have the required dependencies downloaded.
-- Download Microsoft Webview2 and .NET Runtime 8.0.0
-- Microsoft Webview2
-- .NET Runtime 8.0.0
+---
 
-2. "Failed to Attach" Error
-- Security software interference or missing C++ dependencies.
-- Install Visual C++ Redist. (x64)
-- Add the Xeno folder to your antivirus exclusions.
-- Ensure both Xeno and Roblox are fully closed before running Xeno.
+## 1. Xeno Not Opening
 
-3. Version Mismatch / Crash
-- Roblox recently updated. Xeno requires specific client versions.
-- Download: Roblox Downgrader
+**Install Dependencies (Most Common Fix):**
+- **[Microsoft Webview2](https://developer.microsoft.com/en-us/microsoft-edge/webview2)** – Required for the UI.
+- **[.NET Runtime 8.0.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)** – x64 version.
+
+**Steps:**
+1. Install Webview2 first, then .NET Runtime.
+2. Restart your PC.
+3. Relaunch Xeno.
+
+---
+
+## 2. "Failed to Attach" Error
+
+**Cause:** Security software interference or missing C++ dependencies.  
+
+**Fix:**
+- Install **Visual C++ Redistributable (x64)**.
+- Temporarily disable antivirus/firewall.
+- Add the Xeno installation folder to antivirus exclusions.
+- Make sure both Xeno and Roblox are fully closed before launching Xeno.
+
+---
+
+## 3. Version Mismatch / Crash
+
+**Cause:** Roblox recently updated; Xeno requires specific client versions.  
+
+**Fix:**
+- Download **[Roblox Downgrader](#)**.
 - Run the utility to install the last compatible version.
-- Launch the downgraded Robloxplayerbeta.exe via the folder you installed.
+- Launch the downgraded `RobloxPlayerBeta.exe` from the folder you installed.
 
-4. Corrupted Cache Error
-- "Error Parsing Clients JSON" or corrupted installation.
-- Press Win + R on your keyboard.
-- Type %localappdata%/xeno
-- Delete the entire "Xeno" folder.
-- Reinstall Xeno from scratch.
+---
 
-5. Official Site Blocked
-- If you cannot reach the main download source due to ISP blocks.
-- Mirror: x3no.pages.dev
-- Web Proxy: Proxyium
+## 4. Corrupted Cache Error
 
-6. Need Scripts?
-- Finding reliable and current scripts for your game session.
-- Visit ScriptBlox for scripts.
+**Cause:** "Error Parsing Clients JSON" or corrupted installation.  
 
-7. Tabs saying "null"
-- Your tab configuration files have become corrupt.
-- Press Win + R to open Run.
-- Type: %localappdata%/xeno/tabs
-- Delete everything inside this folder.
-- Restart Xeno.
+**Fix:**
+1. Press 'Win + R`, type '%localappdata%/xeno`.
+2. Delete the entire `Xeno` folder.
+3. Reinstall Xeno from the official site.
+
+---
+
+## 5. Official Site Blocked
+
+**Cause:** ISP blocks main download source.  
+
+**Fix:**
+- Mirror: [x3no.pages.dev](https://x3no.pages.dev)
+- Web Proxy: [Proxyium](https://proxyium.com)
+
+---
+
+## 6. Need Scripts?
+
+**Fix:**
+- Visit [ScriptBlox](https://scriptblox.com) for reliable and current scripts.
+
+---
+
+## 7. Tabs Saying "null"
+
+**Cause:** Tab configuration files are corrupted.  
+
+**Fix:**
+1. Press `Win + R` to open Run.
+2. Type `%localappdata%/xeno/tabs`.
+3. Delete everything inside this folder.
+4. Restart Xeno.
 `;
 
 // -----------------------------
