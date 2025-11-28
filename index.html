@@ -514,7 +514,17 @@
             }
         ];
         
-        // This Set is no longer used for AI routing, but we'll keep it as it doesn't hurt.
+        // WORDS THAT BYPASS THE KNOWLEDGE BASE AND GO STRAIGHT TO THE EXTERNAL AI
+        const AI_TRIGGER_WORDS = new Set([
+            'execute',
+            'running',
+            'api', 
+            'key', 
+            'how to use'
+            'executing'
+        ]);
+
+        // Words to ignore (kept for consistency, though less critical now)
         const commonWords = new Set([
             'a', 'an', 'the', 'is', 'am', 'are', 'was', 'were', 'be', 'of', 'in', 'at', 'on', 'to', 'for', 'with', 'and', 'but', 'or', 'i', 'my', 'me', 'you', 'your', 'it', 'its', 'what', 'why', 'how', 'can', 'cant', 'not', 'do', 'does', 'did', 'have', 'has', 'had', 'i\'m', 'i\'ve', 'i\'ll', 'i\'d', 'it\'s', 'that', 'this', 'those', 'these', 'we', 'us', 'our', 'he', 'she', 'they', 'them', 'their', 'when', 'where', 'which', 'who', 'whom', 'about', 'from', 'up', 'down', 'out', 'into', 'then', 'than', 'there', 'what\'s', 'im', 'get', 'getting', 'make', 'making', 'please', 'thanks',
             
@@ -631,15 +641,24 @@
         // Checks if input matches a known issue.
         function getAIResponse(input) {
             const lowerInput = input.toLowerCase();
+            
+            // 1. Check for AI Trigger Words (Priority 1: External AI Fallback)
+            for (const word of AI_TRIGGER_WORDS) {
+                if (lowerInput.includes(word)) {
+                    // Found a word that indicates a general/complex question.
+                    // Return null for response, forcing the logic in sendMessage() to hit the 'else' block and call the external AI.
+                    return { response: null, unknownWord: null };
+                }
+            }
 
-            // 1. Check for Knowledge Base Match (Priority 1)
+            // 2. Check for Knowledge Base Match (Priority 2: Internal Fix)
             for (const entry of knowledgeBase) {
                 if (entry.keywords.some(k => lowerInput.includes(k))) {
                     return { response: entry.response, unknownWord: null };
                 }
             }
 
-            // 2. Fallback
+            // 3. Fallback
             return { response: null, unknownWord: null };
         }
         
