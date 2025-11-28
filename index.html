@@ -24,13 +24,31 @@
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid #1a1a1a;
             transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            position: relative; /* Ensure z-index works */
         }
 
         .fix-card:hover {
             border-color: #4b5563;
             transform: translateY(-4px);
             box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.8);
+            z-index: 10;
         }
+
+        /* --- FIX FOR HARD TO CLICK LINKS --- */
+        /* This makes the clickable area of links bigger and forces them on top */
+        .fix-card a {
+            position: relative;
+            z-index: 20;
+            display: inline-block;
+            padding: 2px 4px; /* Increases clickable surface area */
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .fix-card a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+        /* ----------------------------------- */
 
         .fix-card.completed {
             border-color: #10b981;
@@ -49,6 +67,8 @@
             font-weight: 600;
             font-size: 0.875rem;
             transition: background-color 0.2s;
+            position: relative;
+            z-index: 50; /* Ensure main buttons are always clickable */
         }
 
         @keyframes green-pulse {
@@ -432,15 +452,13 @@
 
 <script>
 // -----------------------------
-// Full AI Chat Script (Finalized)
+// Full AI Chat Script
 // -----------------------------
 
 let messages = [];
 let isChatOpen = false;
 
-// -----------------------------
-// Preloaded Xeno Fixes (CONTEXT UNCHANGED)
-// -----------------------------
+// Preloaded Context
 const fixesContext = `
 ## 1. Xeno Not Opening
 
@@ -510,9 +528,6 @@ const fixesContext = `
 3. Restart Xeno.
 `;
 
-// -----------------------------
-// Chat Window Toggle (Unchanged)
-// -----------------------------
 function toggleChat() {
     const chatWindow = document.getElementById('chat-window');
     const iconOpen = document.getElementById('icon-open');
@@ -532,8 +547,30 @@ function handleEnter(e) {
     if (e.key === 'Enter') sendMessage();
 }
 
+function copyToClipboard(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+        const original = btn.innerHTML;
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+        setTimeout(() => btn.innerHTML = original, 2000);
+    });
+}
+
+function toggleFixStatus(id) {
+    const card = document.getElementById(id);
+    const btn = document.querySelector(`#tracker-${id} button`);
+    if(card.classList.contains('completed')) {
+        card.classList.remove('completed');
+        btn.innerText = "Mark as Fixed";
+        btn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-700');
+    } else {
+        card.classList.add('completed');
+        btn.innerText = "Fixed ✓";
+        btn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700');
+    }
+}
+
 // -----------------------------
-// Helper: Flatten Object to String (ANTI-OBJECT/UNDEFINED LOGIC)
+// Helper: Flatten Object to String
 // -----------------------------
 function flattenAIOutput(aiOutput) {
     if (aiOutput === null || aiOutput === undefined) return "";
@@ -546,7 +583,7 @@ function flattenAIOutput(aiOutput) {
 }
 
 // -----------------------------
-// Append Message (LINK PROTECTION LOGIC)
+// Append Message (WITH FIXED LINK RENDERER)
 // -----------------------------
 function appendMessage(text, sender) {
     const container = document.getElementById('chat-messages');
@@ -561,32 +598,30 @@ function appendMessage(text, sender) {
     // 1. Flatten content
     let textString = flattenAIOutput(text);
 
-    // 2. Final Sanitize: Remove literal "undefined" or "[object Object]" text if it leaked
-    textString = textString.replace(/undefined/g, "").replace(/\[object Object\]/g, "");
-
     try {
         if (typeof marked !== 'undefined') {
             const renderer = new marked.Renderer();
 
-            // SAFE LINK RENDERER: Prevents broken links from being rendered
+            // --- CRITICAL FIX FOR AI LINKS ---
+            // If the link is "undefined", "null" or NOT a web link, render as plain bold text
             renderer.link = (href, title, text) => {
                 let cleanHref = String(href).trim();
-
-                // If the link is invalid, DISABLE the link entirely.
+                
+                // Check if it's a valid web URL (starts with http/https)
                 if (!cleanHref || 
                      cleanHref === "undefined" || 
                      cleanHref === "null" || 
-                     cleanHref.includes("[object Object]")) {
-                    return `<strong>${text}</strong>`; 
+                     cleanHref.includes("object Object") ||
+                     !cleanHref.match(/^https?:\/\//i)) { // Must start with http or https
+                    
+                    return `<strong class="text-indigo-400 border-b border-indigo-400 border-dashed cursor-help" title="Link unavailable">${text}</strong>`; 
                 }
 
-                // Render valid absolute URL link
-                return `<a href="${cleanHref}" target="_blank" rel="noopener noreferrer" style="color: #60a5fa; text-decoration: underline;">${text}</a>`;
+                return `<a href="${cleanHref}" target="_blank" rel="noopener noreferrer" style="color: #60a5fa; text-decoration: underline; font-weight: bold;">${text}</a>`;
             };
 
             bubble.innerHTML = marked.parse(textString, { renderer });
         } else {
-            // Fallback if marked.js isn't loaded
             bubble.innerHTML = `<pre style="white-space: pre-wrap; font-family: inherit;">${textString}</pre>`;
         }
     } catch (err) {
@@ -599,9 +634,6 @@ function appendMessage(text, sender) {
     container.scrollTop = container.scrollHeight;
 }
 
-// -----------------------------
-// Typing Indicators (Unchanged)
-// -----------------------------
 function showTypingIndicator() {
     const container = document.getElementById('chat-messages');
     const div = document.createElement('div');
@@ -622,9 +654,6 @@ function removeTypingIndicator() {
     if (el) el.remove();
 }
 
-// -----------------------------
-// Send Message (AI INSTRUCTIONS ADJUSTED)
-// -----------------------------
 async function sendMessage() {
     const input = document.getElementById('chat-input');
     const message = input.value.trim();
@@ -634,18 +663,14 @@ async function sendMessage() {
     appendMessage(message, 'user');
     showTypingIndicator();
 
-    // -----------------------------------------------------------
-    // SYSTEM PROMPT: STRENGTHENED RULES FOR CLEAN LINKS
-    // -----------------------------------------------------------
     const contextMessages = [
         { 
             role: "system", 
-            content: `You are a helpful assistant. 
+            content: `You are a helpful assistant for Xeno.
             RULES: 
-            1. Output PLAIN MARKDOWN only. 
-            2. Do NOT use JSON or object structures. 
-            3. Do NOT use variables for links. 
-            4. **All URLs must be output in the simplest, most direct format possible to ensure clickability.**
+            1. Output PLAIN MARKDOWN. 
+            2. NO JSON objects. 
+            3. If you don't know a link, do NOT write "undefined", just give the name.
             
             CONTEXT:
             ${fixesContext}`
@@ -666,10 +691,19 @@ async function sendMessage() {
         const data = await response.json();
         let aiText = data?.choices?.[0]?.message?.content;
 
-        // Flatten immediately for safety
         aiText = flattenAIOutput(aiText);
 
-        if (!aiText) aiText = "Please try again.";
+        // --- FILTER OUT BROKEN LINKS ---
+        // Scans specifically for Markdown links where the URL is "undefined" or "null"
+        // Pattern: [Link Text](undefined) -> Link Text
+        if (aiText) {
+            aiText = aiText
+                .replace(/\[([^\]]+)\]\((undefined|null|object\sobject|)\)/gi, '$1') // Removes broken markdown links
+                .replace(/undefined/gi, "") // Removes loose "undefined" words
+                .replace(/\[object Object\]/gi, "");
+        }
+
+        if (!aiText) aiText = "I couldn't process that response. Please try again.";
 
         messages.push({ role: "user", content: message });
         messages.push({ role: "assistant", content: aiText });
