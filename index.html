@@ -514,7 +514,7 @@
             }
         ];
         
-        // Words to ignore when checking for an unknown word (This Set is now only used to optimize KB checks)
+        // This Set is no longer used for AI routing, but we'll keep it as it doesn't hurt.
         const commonWords = new Set([
             'a', 'an', 'the', 'is', 'am', 'are', 'was', 'were', 'be', 'of', 'in', 'at', 'on', 'to', 'for', 'with', 'and', 'but', 'or', 'i', 'my', 'me', 'you', 'your', 'it', 'its', 'what', 'why', 'how', 'can', 'cant', 'not', 'do', 'does', 'did', 'have', 'has', 'had', 'i\'m', 'i\'ve', 'i\'ll', 'i\'d', 'it\'s', 'that', 'this', 'those', 'these', 'we', 'us', 'our', 'he', 'she', 'they', 'them', 'their', 'when', 'where', 'which', 'who', 'whom', 'about', 'from', 'up', 'down', 'out', 'into', 'then', 'than', 'there', 'what\'s', 'im', 'get', 'getting', 'make', 'making', 'please', 'thanks',
             
@@ -592,15 +592,13 @@
                     conversationHistory.push({ role: "assistant", content: kbResponse.replace(/\*\*/g, '') });
                 }, delay);
             } else {
-                // Fallback (No internal match found)
-                const delay = Math.floor(Math.random() * 900) + 600;
-                setTimeout(() => {
-                    removeTyping(typingId);
-                    const fallback = "I'm not sure about that specific issue. \n\nCould you try phrasing it differently? For example: **'Why is it crashing?'** or **'I can't attach'**.";
-                    addBubble(fallback, 'bot');
-                    // Update history
-                    conversationHistory.push({ role: "assistant", content: fallback.replace(/\*\*/g, '') });
-                }, delay);
+                // External AI Fallback (Actual API Call)
+                const aiResponse = await getGeneralAIResponse();
+                removeTyping(typingId);
+                addBubble(aiResponse, 'bot');
+                
+                // Update history with the full response
+                conversationHistory.push({ role: "assistant", content: aiResponse.replace(/\*\*/g, '') });
             }
         }
 
@@ -630,7 +628,7 @@
             scrollToBottom();
         }
         
-        // Checks if input matches a known issue. The 'unknownWord' logic has been removed.
+        // Checks if input matches a known issue.
         function getAIResponse(input) {
             const lowerInput = input.toLowerCase();
 
@@ -641,13 +639,41 @@
                 }
             }
 
-            // 2. Fallback (Always returns null/null if no KB match)
+            // 2. Fallback
             return { response: null, unknownWord: null };
         }
         
-        /* The function getDefinitionFromAI(word) has been removed
-           because the code no longer attempts to identify or fetch definitions for unknown words.
-        */
+        // Calls the external AI API for general queries (calls your /api/chat.js endpoint)
+        async function getGeneralAIResponse() {
+            
+            // We send the entire conversation history, relying on the System Prompt (Directive 3)
+            // to keep the AI focused on Xeno/Exploit-related context and conciseness.
+            const apiMessages = conversationHistory;
+
+            try {
+                // NOTE: This assumes your Vercel/Node environment maps /api/chat to the chat.js file.
+                const response = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ messages: apiMessages }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("API Call Failed:", errorData);
+                    return `*Error: Could not fetch information from AI. (${errorData.error || 'Server error'}). Try asking about crashes or installation.*`;
+                }
+
+                const data = await response.json();
+                // Extract the AI's response text
+                const aiText = data.choices[0].message.content.trim();
+                return aiText;
+
+            } catch (error) {
+                console.error("Network or Fetch Error:", error);
+                return `*Error: Failed to connect to AI service. Please check your API key and connection.*`;
+            }
+        }
 
 
         function showTyping() {
@@ -702,7 +728,5 @@
             }
         }
     </script>
-</body>
-</html>
 </body>
 </html>
