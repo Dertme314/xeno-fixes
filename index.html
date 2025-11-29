@@ -465,287 +465,188 @@
     </button>
 </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <script>
-        // ------------------------------------------------------------------
-        // XENO KNOWLEDGE BASE (The Brain)
-        // ------------------------------------------------------------------
-        const knowledgeBase = [
-            {
-                // TOPIC: NOT OPENING / DEPENDENCIES
-                keywords: ['open', 'start', 'launch', 'click', 'nothing happens', 'dependency', 'webview', 'net', 'runtime'],
-                response: "**Xeno Won't Open?**\n\nYou are missing required Microsoft dependencies.\n\n1. Install [Webview2](https://go.microsoft.com/fwlink/?linkid=2124701)\n2. Install [.NET Runtime 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.10-windows-x64-installer)\n\n*Restart your PC after installing both.*"
-            },
-            {
-                // TOPIC: ATTACH / INJECTION
-                keywords: ['attach', 'inject', 'failed', 'error code', 'dll', 'antivirus', 'defender', 'security'],
-                response: "**Failed to Attach?**\n\nThis is usually caused by Antivirus or missing C++ files.\n\n1. Download [Visual C++ Redistributable (x64)](https://aka.ms/vs/17/release/vc_redist.x64.exe)\n2. **Temporarily disable** Real-time Protection.\n3. Add the Xeno folder to your Antivirus **Exclusions**.\n4. Close Roblox completely and try again."
-            },
-            {
-                // TOPIC: CRASH / VERSION
-                keywords: ['crash', 'close', 'closes', 'version', 'update', 'roblox update', 'downgrade', 'mismatch'],
-                response: "**Is Roblox Crashing?**\n\nRoblox likely updated recently. Xeno requires a specific client version.\n\n1. Download the [Roblox Downgrader](https://rdd.weao.gg).\n2. Run it to revert to the supported version.\n3. **Important:** Launch the game using `RobloxPlayerBeta.exe` from the folder, not the web launcher."
-            },
-            {
-                // TOPIC: JSON / CORRUPT CONFIG
-                keywords: ['json', 'parse', 'corrupt', 'config', 'settings', 'error parsing'],
-                response: "**Corrupt Configuration Detected**\n\nWe need to reset your local Xeno data.\n\n1. Press `Win + R`\n2. Type `%localappdata%/xeno` and hit Enter.\n3. Delete that **entire folder**.\n4. Reinstall/Restart Xeno."
-            },
-            {
-                // TOPIC: TABS / NULL
-                keywords: ['tab', 'null', 'blank', 'script hub', 'loading'],
-                response: "**Tabs saying 'null'?**\n\nYour tab cache is corrupt.\n\n1. Press `Win + R`\n2. Type `%localappdata%/xeno/tabs`\n3. Delete all files inside that folder.\n4. Restart Xeno."
-            },
-            {
-                // TOPIC: SITE BLOCKED
-                keywords: ['site', 'website', 'block', 'isp', 'download', 'cant download'],
-                response: "**Official Site Blocked?**\n\nYour ISP might be blocking the main domain. Try these:\n\n* **Mirror:** [x3no.pages.dev](https://x3no.pages.dev)\n* **Web Proxy:** [Proxyium](https://www.proxyium.com/)"
-            },
-            {
-                // TOPIC: SCRIPTS
-                keywords: ['script', 'hack', 'cheat', 'code', 'pastebin', 'executor'],
-                response: "**Looking for Scripts?**\n\nXeno executes scripts, but doesn't make them. I recommend searching on:\n\n* **[ScriptBlox.com](https://scriptblox.com)**\n* **[RbxScript.com](https://rbxscript.com)**"
-            },
-            {
-                // TOPIC: GREETINGS / GENERIC
-                keywords: ['hi', 'hello', 'hey', 'help', 'support', 'test'],
-                response: "Hello! I am the Xeno Support AI. \n\nI can help you debug **Crashes**, **Attachment Errors**, or **Installation issues**. What's happening?"
-            }
-        ];
+    // ------------------------------------------------------------------
+    // 1. DATA: The Knowledge Base
+    // ------------------------------------------------------------------
+    const knowledgeBase = [
+        {
+            keywords: ['open', 'start', 'launch', 'click', 'nothing happens', 'dependency', 'webview', 'net', 'runtime'],
+            response: "**Xeno Won't Open?**\n\nYou are missing required Microsoft dependencies.\n\n1. Install [Webview2](https://go.microsoft.com/fwlink/?linkid=2124701)\n2. Install [.NET Runtime 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.10-windows-x64-installer)\n\n*Restart your PC after installing both.*"
+        },
+        {
+            keywords: ['attach', 'inject', 'failed', 'error code', 'dll', 'antivirus', 'defender', 'security'],
+            response: "**Failed to Attach?**\n\nThis is usually caused by Antivirus or missing C++ files.\n\n1. Download [Visual C++ Redistributable (x64)](https://aka.ms/vs/17/release/vc_redist.x64.exe)\n2. **Temporarily disable** Real-time Protection.\n3. Add the Xeno folder to your Antivirus **Exclusions**.\n4. Close Roblox completely and try again."
+        },
+        {
+            keywords: ['crash', 'close', 'closes', 'version', 'update', 'roblox update', 'downgrade', 'mismatch'],
+            response: "**Is Roblox Crashing?**\n\nRoblox likely updated recently. Xeno requires a specific client version.\n\n1. Download the [Roblox Downgrader](https://rdd.weao.gg).\n2. Run it to revert to the supported version.\n3. **Important:** Launch the game using `RobloxPlayerBeta.exe` from the folder, not the web launcher."
+        },
+        {
+            keywords: ['json', 'parse', 'corrupt', 'config', 'settings', 'error parsing'],
+            response: "**Corrupt Configuration Detected**\n\nWe need to reset your local Xeno data.\n\n1. Press `Win + R`\n2. Type `%localappdata%/xeno` and hit Enter.\n3. Delete that **entire folder**.\n4. Reinstall/Restart Xeno."
+        },
+        {
+            keywords: ['tab', 'null', 'blank', 'script hub', 'loading'],
+            response: "**Tabs saying 'null'?**\n\nYour tab cache is corrupt.\n\n1. Press `Win + R`\n2. Type `%localappdata%/xeno/tabs`\n3. Delete all files inside that folder.\n4. Restart Xeno."
+        },
+        {
+            keywords: ['site', 'website', 'block', 'isp', 'download', 'cant download'],
+            response: "**Official Site Blocked?**\n\nYour ISP might be blocking the main domain. Try these:\n\n* **Mirror:** [x3no.pages.dev](https://x3no.pages.dev)\n* **Web Proxy:** [Proxyium](https://www.proxyium.com/)"
+        },
+        {
+            keywords: ['script', 'hack', 'cheat', 'code', 'pastebin', 'executor'],
+            response: "**Looking for Scripts?**\n\nXeno executes scripts, but doesn't make them. I recommend searching on:\n\n* **[ScriptBlox.com](https://scriptblox.com)**\n* **[RbxScript.com](https://rbxscript.com)**"
+        },
+        {
+            keywords: ['hi', 'hello', 'hey', 'help', 'support', 'test'],
+            response: "Hello! I am the Xeno Support AI. \n\nI can help you debug **Crashes**, **Attachment Errors**, or **Installation issues**. What's happening?"
+        }
+    ];
+
+    // ------------------------------------------------------------------
+    // 2. LOGIC: Chat & UI Functions
+    // ------------------------------------------------------------------
+
+    let isChatOpen = false;
+    const chatWindow = document.getElementById('chat-window');
+    const iconOpen = document.getElementById('icon-open');
+    const iconClose = document.getElementById('icon-close');
+    const chatInput = document.getElementById('chat-input');
+    const messagesContainer = document.getElementById('chat-messages');
+
+    function toggleChat() {
+        isChatOpen = !isChatOpen;
+        if (isChatOpen) {
+            chatWindow.classList.remove('chat-hidden');
+            chatWindow.classList.add('chat-visible');
+            iconOpen.classList.add('hidden');
+            iconClose.classList.remove('hidden');
+            setTimeout(() => chatInput.focus(), 100);
+        } else {
+            chatWindow.classList.remove('chat-visible');
+            chatWindow.classList.add('chat-hidden');
+            iconOpen.classList.remove('hidden');
+            iconClose.classList.add('hidden');
+        }
+    }
+
+    function handleEnter(e) {
+        if (e.key === 'Enter') sendMessage();
+    }
+
+    function sendMessage() {
+        const text = chatInput.value.trim();
+        if (!text) return;
+
+        // User Bubble
+        addBubble(text, 'user');
+        chatInput.value = '';
+
+        // Typing Indicator
+        const typingId = showTyping();
+
+        // AI Response Logic
+        const delay = Math.floor(Math.random() * 800) + 500;
+        setTimeout(() => {
+            removeTyping(typingId);
+            const response = getAIResponse(text);
+            addBubble(response, 'bot');
+        }, delay);
+    }
+
+    function addBubble(text, sender) {
+        const div = document.createElement('div');
+        const isUser = sender === 'user';
         
-        // WORDS THAT BYPASS THE KNOWLEDGE BASE AND GO STRAIGHT TO THE EXTERNAL AI
-        const AI_TRIGGER_WORDS = new Set([
-            'execute',
-            'running',
-            'api', 
-            'key', 
-            'how to use'
-            'executing'
-        ]);
-
-        // Words to ignore (kept for consistency, though less critical now)
-        const commonWords = new Set([
-            'a', 'an', 'the', 'is', 'am', 'are', 'was', 'were', 'be', 'of', 'in', 'at', 'on', 'to', 'for', 'with', 'and', 'but', 'or', 'i', 'my', 'me', 'you', 'your', 'it', 'its', 'what', 'why', 'how', 'can', 'cant', 'not', 'do', 'does', 'did', 'have', 'has', 'had', 'i\'m', 'i\'ve', 'i\'ll', 'i\'d', 'it\'s', 'that', 'this', 'those', 'these', 'we', 'us', 'our', 'he', 'she', 'they', 'them', 'their', 'when', 'where', 'which', 'who', 'whom', 'about', 'from', 'up', 'down', 'out', 'into', 'then', 'than', 'there', 'what\'s', 'im', 'get', 'getting', 'make', 'making', 'please', 'thanks',
-            
-            // Add all knowledgeBase keywords to ensure they aren't flagged as "unknown"
-            'open', 'start', 'launch', 'click', 'nothing', 'happens', 'dependency', 'webview', 'net', 'runtime', 'attach', 'inject', 'failed', 'error', 'code', 'dll', 'antivirus', 'defender', 'security', 'crash', 'close', 'closes', 'version', 'update', 'roblox', 'downgrade', 'mismatch', 'json', 'parse', 'corrupt', 'config', 'settings', 'parsing', 'tab', 'null', 'blank', 'script', 'hub', 'loading', 'site', 'website', 'block', 'isp', 'download', 'cant', 'cheat', 'pastebin', 'executor', 'hi', 'hello', 'hey', 'help', 'support', 'test',
-        ]);
-
-
-        // ------------------------------------------------------------------
-        // CHAT LOGIC & UI HANDLING
-        // ------------------------------------------------------------------
-
-        let isChatOpen = false;
-        const chatWindow = document.getElementById('chat-window');
-        const iconOpen = document.getElementById('icon-open');
-        const iconClose = document.getElementById('icon-close');
-        const chatInput = document.getElementById('chat-input');
-        const messagesContainer = document.getElementById('chat-messages');
+        div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} animate-fade-in-up`;
         
-        // Array to store the conversation history for the external AI API
-        const conversationHistory = [
-            {
-                role: "system",
-                content: "You are **Xeno**, a friendly, concise, and helpful general-purpose AI assistant specializing in the Xeno Roblox Executor. \n\n**Core Directives:**\n1. **Safety Disclaimer:** If the user asks about the executor's safety, you *must* include the following information: \"Xeno is not a virus. Exploits are frequently and falsely flagged as viruses or malware by antivirus software due to their nature (e.g., obfuscation, game manipulation software).\"\n2. **Response Format:** Always provide a **brief, single-paragraph response** limited to a **maximum of three (3) sentences** for any user query.\n3. **Focus and Tone:** Maintain a **friendly and helpful** demeanor, and **strictly focus** your answers on the Xeno Roblox Executor. **Do not** provide general definitions for common words or discuss off-topic subjects. If a user asks a question unrelated to Xeno, gently inform them you are only programmed to assist with Xeno-related issues like installation or crashes."
-            },
-            {
-                role: "assistant", // Initial message, already in the HTML
-                content: "Hello! I am the Xeno Support AI. I can help you debug Crashes, Attachment Errors, or Installation issues. What's happening?"
-            }
-        ];
-
-
-        function toggleChat() {
-            isChatOpen = !isChatOpen;
-            if (isChatOpen) {
-                chatWindow.classList.remove('chat-hidden');
-                chatWindow.classList.add('chat-visible');
-                iconOpen.classList.add('hidden');
-                iconClose.classList.remove('hidden');
-                setTimeout(() => chatInput.focus(), 100);
-            } else {
-                chatWindow.classList.remove('chat-visible');
-                chatWindow.classList.add('chat-hidden');
-                iconOpen.classList.remove('hidden');
-                iconClose.classList.add('hidden');
-            }
-        }
-
-        function handleEnter(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-
-        async function sendMessage() {
-            const text = chatInput.value.trim();
-            if (!text) return;
-
-            // 1. User Message
-            addBubble(text, 'user');
-            conversationHistory.push({ role: "user", content: text });
-            chatInput.value = '';
-
-            // 2. Typing Indicator
-            const typingId = showTyping();
-
-            // Check if the input matches a known issue
-            const { response: kbResponse } = getAIResponse(text);
-
-            if (kbResponse) {
-                // Internal Knowledge Base Response (Simulated Delay)
-                const delay = Math.floor(Math.random() * 900) + 600;
-                setTimeout(() => {
-                    removeTyping(typingId);
-                    addBubble(kbResponse, 'bot');
-                    // Update history for the next turn
-                    conversationHistory.push({ role: "assistant", content: kbResponse.replace(/\*\*/g, '') });
-                }, delay);
-            } else {
-                // External AI Fallback (Actual API Call)
-                const aiResponse = await getGeneralAIResponse();
-                removeTyping(typingId);
-                addBubble(aiResponse, 'bot');
-                
-                // Update history with the full response
-                conversationHistory.push({ role: "assistant", content: aiResponse.replace(/\*\*/g, '') });
-            }
-        }
-
-        function addBubble(text, sender) {
-            const div = document.createElement('div');
-            const isUser = sender === 'user';
+        const bubble = document.createElement('div');
+        if (isUser) {
+            bubble.className = "bg-indigo-600 text-white rounded-2xl rounded-tr-none px-4 py-2.5 text-sm max-w-[85%] shadow-md break-words";
+            bubble.textContent = text;
+        } else {
+            bubble.className = "bg-gray-800 text-gray-200 rounded-2xl rounded-tl-none px-4 py-3 text-sm max-w-[85%] border border-gray-700 shadow-sm break-words";
+            // Check if 'marked' library is loaded, otherwise just text
+            bubble.innerHTML = (typeof marked !== 'undefined') ? marked.parse(text) : text;
             
-            div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} animate-fade-in-up`;
-            
-            const bubble = document.createElement('div');
-            if (isUser) {
-                bubble.className = "bg-indigo-600 text-white rounded-2xl rounded-tr-none px-4 py-2.5 text-sm max-w-[85%] shadow-md break-words";
-                bubble.textContent = text;
-            } else {
-                bubble.className = "bg-gray-800 text-gray-200 rounded-2xl rounded-tl-none px-4 py-3 text-sm max-w-[85%] border border-gray-700 shadow-sm break-words";
-                // Render Markdown
-                bubble.innerHTML = marked.parse(text);
-                // Style links
-                bubble.querySelectorAll('a').forEach(a => {
-                    a.classList.add('text-blue-400', 'hover:text-blue-300', 'underline');
-                    a.setAttribute('target', '_blank');
-                });
-            }
-
-            div.appendChild(bubble);
-            messagesContainer.appendChild(div);
-            scrollToBottom();
-        }
-        
-        // Checks if input matches a known issue.
-        function getAIResponse(input) {
-            const lowerInput = input.toLowerCase();
-            
-            // 1. Check for AI Trigger Words (Priority 1: External AI Fallback)
-            for (const word of AI_TRIGGER_WORDS) {
-                if (lowerInput.includes(word)) {
-                    // Found a word that indicates a general/complex question.
-                    // Return null for response, forcing the logic in sendMessage() to hit the 'else' block and call the external AI.
-                    return { response: null, unknownWord: null };
-                }
-            }
-
-            // 2. Check for Knowledge Base Match (Priority 2: Internal Fix)
-            for (const entry of knowledgeBase) {
-                if (entry.keywords.some(k => lowerInput.includes(k))) {
-                    return { response: entry.response, unknownWord: null };
-                }
-            }
-
-            // 3. Fallback
-            return { response: null, unknownWord: null };
-        }
-        
-        // Calls the external AI API for general queries (calls your /api/chat.js endpoint)
-        async function getGeneralAIResponse() {
-            
-            // We send the entire conversation history, relying on the System Prompt (Directive 3)
-            // to keep the AI focused on Xeno/Exploit-related context and conciseness.
-            const apiMessages = conversationHistory;
-
-            try {
-                // NOTE: This assumes your Vercel/Node environment maps /api/chat to the chat.js file.
-                const response = await fetch("/api/chat", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ messages: apiMessages }),
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error("API Call Failed:", errorData);
-                    return `*Error: Could not fetch information from AI. (${errorData.error || 'Server error'}). Try asking about crashes or installation.*`;
-                }
-
-                const data = await response.json();
-                // Extract the AI's response text
-                const aiText = data.choices[0].message.content.trim();
-                return aiText;
-
-            } catch (error) {
-                console.error("Network or Fetch Error:", error);
-                return `*Error: Failed to connect to AI service. Please check your API key and connection.*`;
-            }
-        }
-
-
-        function showTyping() {
-            const id = 'typing-' + Date.now();
-            const div = document.createElement('div');
-            div.id = id;
-            div.className = 'flex justify-start animate-fade-in-up';
-            div.innerHTML = `
-                <div class="bg-gray-800 rounded-2xl rounded-tl-none px-4 py-3 border border-gray-700 flex items-center space-x-1 w-fit">
-                    <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
-                    <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
-                    <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
-                </div>
-            `;
-            messagesContainer.appendChild(div);
-            scrollToBottom();
-            return id;
-        }
-
-        function removeTyping(id) {
-            const el = document.getElementById(id);
-            if (el) el.remove();
-        }
-
-        function scrollToBottom() {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-
-        // ------------------------------------------------------------------
-        // UTILITIES FOR MAIN PAGE (Copy/Fix Buttons)
-        // ------------------------------------------------------------------
-        function copyToClipboard(text, btn) {
-            navigator.clipboard.writeText(text).then(() => {
-                const originalHtml = btn.innerHTML;
-                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
-                setTimeout(() => btn.innerHTML = originalHtml, 2000);
+            // Style links
+            bubble.querySelectorAll('a').forEach(a => {
+                a.classList.add('text-blue-400', 'hover:text-blue-300', 'underline');
+                a.setAttribute('target', '_blank');
             });
         }
+        div.appendChild(bubble);
+        messagesContainer.appendChild(div);
+        scrollToBottom();
+    }
 
-        function toggleFixStatus(id) {
-            const card = document.getElementById(id);
-            const btn = document.querySelector(`#tracker-${id} button`);
-            
-            if (card.classList.contains('completed')) {
-                card.classList.remove('completed');
-                btn.innerText = "Mark as Fixed";
-                btn.classList.remove('bg-green-600', 'text-white');
-            } else {
-                card.classList.add('completed');
-                btn.innerText = "Fixed";
-                btn.classList.add('bg-green-600', 'text-white');
+    function getAIResponse(input) {
+        const lowerInput = input.toLowerCase();
+        for (const entry of knowledgeBase) {
+            if (entry.keywords.some(k => lowerInput.includes(k))) {
+                return entry.response;
             }
         }
-    </script>
+        return "I'm not sure about that specific issue. \n\nCould you try phrasing it differently? For example: **'Why is it crashing?'** or **'I can't attach'**.";
+    }
+
+    function showTyping() {
+        const id = 'typing-' + Date.now();
+        const div = document.createElement('div');
+        div.id = id;
+        div.className = 'flex justify-start animate-fade-in-up';
+        div.innerHTML = `
+            <div class="bg-gray-800 rounded-2xl rounded-tl-none px-4 py-3 border border-gray-700 flex items-center space-x-1 w-fit">
+                <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+            </div>
+        `;
+        messagesContainer.appendChild(div);
+        scrollToBottom();
+        return id;
+    }
+
+    function removeTyping(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    }
+
+    function scrollToBottom() {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // ------------------------------------------------------------------
+    // 3. UTILITIES: Fix Buttons & Copy
+    // ------------------------------------------------------------------
+
+    function copyToClipboard(text, btn) {
+        navigator.clipboard.writeText(text).then(() => {
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+            setTimeout(() => btn.innerHTML = originalHtml, 2000);
+        });
+    }
+
+    function toggleFixStatus(id) {
+        const card = document.getElementById(id);
+        const btn = document.querySelector(`#tracker-${id} button`);
+        
+        if (card.classList.contains('completed')) {
+            card.classList.remove('completed');
+            btn.innerText = "Mark as Fixed";
+            btn.classList.remove('bg-green-600', 'text-white');
+        } else {
+            card.classList.add('completed');
+            btn.innerText = "Fixed";
+            btn.classList.add('bg-green-600', 'text-white');
+        }
+    }
+</script>
+</body>
+</html>
 </body>
 </html>
