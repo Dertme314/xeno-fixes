@@ -469,7 +469,7 @@
 
 <script>
     // ------------------------------------------------------------------
-    // 1. DATA: The Knowledge Base
+    // 1. DATA: The Knowledge Base (Local Keyword Fixes)
     // ------------------------------------------------------------------
     const knowledgeBase = [
         {
@@ -507,9 +507,15 @@
     ];
 
     // ------------------------------------------------------------------
-    // 2. LOGIC: Chat & UI Functions
+    // 2. LOGIC: Conversation State & UI Functions
     // ------------------------------------------------------------------
 
+    // State for the External AI (maintains context for the API)
+    const conversationHistory = [{
+        role: "system",
+        content: "You are Xeno AI Support, a helpful, friendly assistant. Your primary goal is to provide intelligent support based on Xeno documentation. If the user asks for scripts, gently redirect them to ScriptBlox.com. Keep responses brief and use bullet points when listing steps."
+    }];
+    
     let isChatOpen = false;
     const chatWindow = document.getElementById('chat-window');
     const iconOpen = document.getElementById('icon-open');
@@ -536,25 +542,81 @@
     function handleEnter(e) {
         if (e.key === 'Enter') sendMessage();
     }
+    
+    // --- Local Keyword Matcher Function ---
+    function getLocalResponse(input) {
+        const lowerInput = input.toLowerCase().trim();
 
-    function sendMessage() {
+        for (const entry of knowledgeBase) {
+            // Check if any keyword exists in the user's sentence
+            if (entry.keywords.some(keyword => lowerInput.includes(keyword))) {
+                // Found a fast, local match!
+                return entry.response;
+            }
+        }
+        // No local match found
+        return null;
+    }
+
+    // --- Main Send Message Function (Async for API Fallback) ---
+    async function sendMessage() {
         const text = chatInput.value.trim();
         if (!text) return;
 
-        // User Bubble
+        // 1. Display User Message & Clear Input
         addBubble(text, 'user');
         chatInput.value = '';
 
-        // Typing Indicator
-        const typingId = showTyping();
+        // 2. CHECK LOCAL KNOWLEDGE BASE FIRST
+        const localResponse = getLocalResponse(text);
 
-        // AI Response Logic
-        const delay = Math.floor(Math.random() * 800) + 500;
-        setTimeout(() => {
+        if (localResponse) {
+            // 🚀 SUCCESS: Use the fast local response!
+            addBubble(localResponse, 'bot');
+            return; // Stop execution here and skip the AI call
+        }
+
+        // 3. FALLBACK: Local search failed, initiate AI request
+        const typingId = showTyping();
+        
+        // Add user message to history ONLY when moving to AI 
+        conversationHistory.push({ role: "user", content: text }); 
+
+        try {
+            const response = await fetch('/api/chat', { // Your Vercel endpoint
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    messages: conversationHistory 
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `AI API responded with status ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            // Extract the AI's response text
+            const aiResponseText = data.choices[0]?.message?.content || "Sorry, the external AI model failed to provide a response.";
+            
+            // Add AI response to history
+            conversationHistory.push({ role: "assistant", content: aiResponseText });
+
+            // Display AI response
             removeTyping(typingId);
-            const response = getAIResponse(text);
-            addBubble(response, 'bot');
-        }, delay);
+            addBubble(aiResponseText, 'bot');
+
+        } catch (error) {
+            console.error("AI Request failed:", error);
+            removeTyping(typingId);
+            addBubble(`**AI Error:** I couldn't reach the support AI. Please ask about a known topic or try again later.`, 'bot');
+            // Remove the user message from history so the error isn't persisted for the next query
+            conversationHistory.pop(); 
+        }
     }
 
     function addBubble(text, sender) {
@@ -583,15 +645,7 @@
         scrollToBottom();
     }
 
-    function getAIResponse(input) {
-        const lowerInput = input.toLowerCase();
-        for (const entry of knowledgeBase) {
-            if (entry.keywords.some(k => lowerInput.includes(k))) {
-                return entry.response;
-            }
-        }
-        return "I'm not sure about that specific issue. \n\nCould you try phrasing it differently? For example: **'Why is it crashing?'** or **'I can't attach'**.";
-    }
+    // NOTE: The old getAIResponse has been removed and replaced by the logic in sendMessage.
 
     function showTyping() {
         const id = 'typing-' + Date.now();
@@ -646,7 +700,5 @@
         }
     }
 </script>
-</body>
-</html>
 </body>
 </html>
