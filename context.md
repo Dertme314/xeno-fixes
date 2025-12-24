@@ -28,7 +28,7 @@ Solution:
 Download and install Microsoft Webview2.(https://go.microsoft.com/fwlink/?linkid=2124701)
 
 Download and install .NET Runtime 8.0.0(https://dotnet.microsoft.com/en-us/download/dotnet/8.0)If .NET 8.0 did not work try installing .NET Runtime 10.0 (https://dotnet.microsoft.com/en-us/download/dotnet/10.0)In rare cases, if the other UI does not open, installing node.js may help.(https://nodejs.org/en)
-
+sometimes pressing win+ r and going to %localappdata%/xeno and deleting everything can make it work
 Restart your PC after installing both.
 
 2. Issue: "Failed to Attach" Error
