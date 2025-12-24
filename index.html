@@ -634,53 +634,52 @@
 
 <script>
     // ------------------------------------------------------------------
-    // 1. DATA: The Knowledge Base (Local Keyword Fixes)
+    // 1. SYSTEM PROMPT & CONTEXT LOADER
     // ------------------------------------------------------------------
-    const knowledgeBase = [
-        {
-            keywords: ['open', 'start', 'launch', 'click', 'nothing happens', 'dependency', 'webview', 'net', 'runtime'],
-            response: "**Xeno Won't Open?**\n\nYou are missing required Microsoft dependencies.\n\n1. Install [Webview2](https://go.microsoft.com/fwlink/?linkid=2124701)\n2. Install [.NET Runtime 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.10-windows-x64-installer)\n\n*Restart your PC after installing both.*"
-        },
-        {
-            keywords: ['attach', 'inject', 'failed', 'error code', 'dll', 'antivirus', 'defender', 'security'],
-            response: "**Failed to Attach?**\n\nThis is usually caused by Antivirus or missing C++ files.\n\n1. Download [Visual C++ Redistributable (x64)](https://aka.ms/vs/17/release/vc_redist.x64.exe)\n2. **Temporarily disable** Real-time Protection.\n3. Add the Xeno folder to your Antivirus **Exclusions**.\n4. Close Roblox completely and try again."
-        },
-        {
-            keywords: ['crash', 'close', 'closes', 'version', 'update', 'roblox update', 'downgrade', 'mismatch'],
-            response: "**Is Roblox Crashing?**\n\nRoblox likely updated recently. Xeno requires a specific client version.\n\n1. Download the [Roblox Downgrader](https://rdd.weao.gg).\n2. Run it to revert to the supported version.\n3. **Important:** Launch the game using `RobloxPlayerBeta.exe` from the folder, not the web launcher."
-        },
-        {
-            keywords: ['json', 'parse', 'corrupt', 'config', 'settings', 'error parsing'],
-            response: "**Corrupt Configuration Detected**\n\nWe need to reset your local Xeno data.\n\n1. Press `Win + R`\n2. Type `%localappdata%/xeno` and hit Enter.\n3. Delete that **entire folder**.\n4. Reinstall/Restart Xeno."
-        },
-        {
-            keywords: ['tab', 'null', 'blank', 'script hub', 'loading'],
-            response: "**Tabs saying 'null'?**\n\nYour tab cache is corrupt.\n\n1. Press `Win + R`\n2. Type `%localappdata%/xeno/tabs`\n3. Delete all files inside that folder.\n4. Restart Xeno."
-        },
-        {
-            keywords: ['site', 'website', 'block', 'isp', 'download', 'cant download'],
-            response: "**Official Site Blocked?**\n\nYour ISP might be blocking the main domain. Try these:\n\n* **Mirror:** [x3no.pages.dev](https://x3no.pages.dev)\n* **Web Proxy:** [Proxyium](https://www.proxyium.com/)"
-        },
-        {
-            keywords: ['script', 'hack', 'cheat', 'code', 'pastebin', 'executor'],
-            response: "**Looking for Scripts?**\n\nXeno executes scripts, but doesn't make them. I recommend searching on:\n\n* **[ScriptBlox.com](https://scriptblox.com)**\n* **[RbxScript.com](https://rbxscript.com)**"
-        },
-        {
-            keywords: ['hi', 'hello', 'hey', 'help', 'support', 'test'],
-            response: "Hello! I am the Xeno Support AI. \n\nI can help you debug **Crashes**, **Attachment Errors**, or **Installation issues**. What's happening?"
+    
+    // Default System Instruction
+    const conversationHistory = [
+        { 
+            role: "system", 
+            content: "You are Xeno AI Support. You help with installation, crashes, and attachments. If you don't know the answer, refer the user to Discord." 
         }
     ];
 
+    // --- FUNCTION TO LOAD CONTEXT.MD ---
+    async function loadContext() {
+        try {
+            // This fetches the file from your website root
+            const response = await fetch('context.md');
+            
+            if (!response.ok) throw new Error("Context file not found");
+            
+            const markdownText = await response.text();
+            
+            // Append the file content to the system prompt
+            conversationHistory[0].content = `
+                You are Xeno AI Support. 
+                Use the following KNOWLEDGE BASE to answer the user's questions. 
+                If the answer is not in the knowledge base, suggest joining the Discord.
+                
+                --- START KNOWLEDGE BASE ---
+                ${markdownText}
+                --- END KNOWLEDGE BASE ---
+            `;
+            
+            console.log("✅ AI Context Loaded Successfully from context.md");
+            
+        } catch (error) {
+            console.error("⚠️ Could not load context.md:", error);
+        }
+    }
+
+    // Load the context immediately when page opens
+    loadContext();
+
     // ------------------------------------------------------------------
-    // 2. LOGIC: Conversation State & UI Functions
+    // 2. UI & CHAT LOGIC
     // ------------------------------------------------------------------
 
-    // State for the External AI (maintains context for the API)
-const conversationHistory = [{
-        role: "system",
-        content: "You are Xeno AI Support, an expert and friendly technical assistant for the Xeno software utility. Your primary goal is to **troubleshoot, diagnose, and provide concise step-by-step solutions** for common Xeno technical issues. Maintain a **professional, helpful, and optimistic tone**. Do not apologize unless you cannot answer the question. Keep responses **brief and highly scannable**, using bullet points for all lists of instructions or steps. **LIMITATION:** You are an *internal* support agent. Your knowledge is strictly limited to issues concerning **installation, dependencies (Webview2, .NET), attachment errors, crashes, configuration files (config.json), and version mismatches**. **SCRIPTS:** If the user asks for scripts, executors, hacks, cheats, or code, you must politely **redirect them** to safe, external script repositories. **HUMAN SUPPORT:** If you cannot find a clear solution, suggest contacting a human support agent on Discord instead of guessing. Use **Markdown formatting** (e.g., **bold** for emphasis, lists for steps). Always include a **specific heading or title** for the solution (e.g., \"**Fixing Failed to Attach**\")."
-    }];
-    
     let isChatOpen = false;
     const chatWindow = document.getElementById('chat-window');
     const iconOpen = document.getElementById('icon-open');
@@ -707,87 +706,57 @@ const conversationHistory = [{
     function handleEnter(e) {
         if (e.key === 'Enter') sendMessage();
     }
-    
-    // --- Local Keyword Matcher Function ---
-    function getLocalResponse(input) {
-        const lowerInput = input.toLowerCase().trim();
 
-        for (const entry of knowledgeBase) {
-            // Check if any keyword exists in the user's sentence
-            if (entry.keywords.some(keyword => lowerInput.includes(keyword))) {
-                // Found a fast, local match!
-                return entry.response;
-            }
-        }
-        // No local match found
-        return null;
-    }
-
-    // --- Main Send Message Function (Async for API Fallback) ---
+    // --- MAIN SEND FUNCTION ---
     async function sendMessage() {
         const text = chatInput.value.trim();
         if (!text) return;
 
-        // 1. Display User Message & Clear Input
+        // 1. Show User Message
         addBubble(text, 'user');
         chatInput.value = '';
 
-        // 2. CHECK LOCAL KNOWLEDGE BASE FIRST
-        const localResponse = getLocalResponse(text);
-
-        if (localResponse) {
-            // 🚀 SUCCESS: Use the fast local response!
-            addBubble(localResponse, 'bot');
-            return; // Stop execution here and skip the AI call
-        }
-
-        // 3. FALLBACK: Local search failed, initiate AI request
+        // 2. Show Typing Indicator
         const typingId = showTyping();
         
-        // Add user message to history ONLY when moving to AI 
-        conversationHistory.push({ role: "user", content: text }); 
+        // Add user message to history
+        conversationHistory.push({ role: "user", content: text });
 
         try {
-            const response = await fetch('/api/chat', { // Your Vercel endpoint
+            // NOTE: Replace '/api/chat' with your actual backend URL if you have one.
+            const response = await fetch('/api/chat', { 
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    messages: conversationHistory 
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: conversationHistory })
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || `AI API responded with status ${response.status}`);
-            }
+            if (!response.ok) throw new Error("API Error");
 
             const data = await response.json();
-            
-            // Extract the AI's response text
-            const aiResponseText = data.choices[0]?.message?.content || "Sorry, the external AI model failed to provide a response.";
-            
+            const aiResponseText = data.choices ? data.choices[0].message.content : data.text; 
+
             // Add AI response to history
             conversationHistory.push({ role: "assistant", content: aiResponseText });
 
-            // Display AI response
             removeTyping(typingId);
             addBubble(aiResponseText, 'bot');
 
         } catch (error) {
             console.error("AI Request failed:", error);
             removeTyping(typingId);
-            addBubble(`**AI Error:** I couldn't reach the support AI. Please ask about a known topic or try again later.`, 'bot');
-            // Remove the user message from history so the error isn't persisted for the next query
-            conversationHistory.pop(); 
+            
+            // SIMULATED RESPONSE for GitHub Pages
+            setTimeout(() => {
+                const fallbackResponse = "I have loaded your `context.md` file, but I cannot generate a new answer because there is no backend server connected here on GitHub Pages. \n\nIf you connect this to a Vercel backend, I will be able to answer using the context file!";
+                addBubble(fallbackResponse, 'bot');
+            }, 500);
         }
     }
 
+    // --- UI HELPERS ---
     function addBubble(text, sender) {
         const div = document.createElement('div');
         const isUser = sender === 'user';
-        
         div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} animate-fade-in-up`;
         
         const bubble = document.createElement('div');
@@ -796,13 +765,13 @@ const conversationHistory = [{
             bubble.textContent = text;
         } else {
             bubble.className = "bg-gray-800 text-gray-200 rounded-2xl rounded-tl-none px-4 py-3 text-sm max-w-[85%] border border-gray-700 shadow-sm break-words";
-            // Check if 'marked' library is loaded, otherwise just text
+            // Use 'marked' for markdown if available, else plain text
             bubble.innerHTML = (typeof marked !== 'undefined') ? marked.parse(text) : text;
             
-            // Style links
+            // Style links inside bubble
             bubble.querySelectorAll('a').forEach(a => {
-                a.classList.add('text-blue-400', 'hover:text-blue-300', 'underline');
-                a.setAttribute('target', '_blank');
+                a.className = "text-blue-400 hover:text-blue-300 underline";
+                a.target = "_blank";
             });
         }
         div.appendChild(bubble);
