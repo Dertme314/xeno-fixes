@@ -94,8 +94,10 @@ Official Website: https://xeno.onlmirror site if that doesn’t work x3no.pages.
 
 Discord Support: https://discord.gg/xe-no
 
-Script Repository: https://scriptblox.comOther useful informationIf a client on client manager is added then gets removed right after instantly 
+Script Repository: https://scriptblox.com 
 
+Other useful information
+If a client on client manager is added then gets removed right after instantly 
 This is because Xeno can not reach the endpoint to retrieve updates and client data. If you are using any DNS changer please disable it. Try using a VPN because the endpoint may be blocked by your ISP.If you get a notification in-game that states "Make sure Xeno is open otherwise your files will not save" right after attaching 
 
 that is due to the client not being able to connect to the Xeno application. This issue is common for people using any bad VPNs, make sure we are able to access the local server @http://localhost:3110
