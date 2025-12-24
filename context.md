@@ -116,3 +116,7 @@ If this script works and the menu opens, Xeno is working fine.
 
 The issue is with your previous script. Please find a new, updated script on ScriptBlox.
 
+
+
+Xeno is undetected from client modification bans, but there is a potential risk of being banned during Roblox ban waves.
+
