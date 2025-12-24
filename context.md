@@ -18,6 +18,8 @@ False Positives: If a user is worried about a virus, explain that Xeno is safe b
 
 Escalation: If the user's issue is not listed here, or if the fixes fail, tell them to join the Discord Server for human help.
 
+Send full messages:  dont cut off your messages
+
 🛠️ Troubleshooting Guide
 
 1. Issue: Xeno Will Not Open / Nothing Happens
