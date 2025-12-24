@@ -100,5 +100,15 @@ This is because Xeno can not reach the endpoint to retrieve updates and client d
 
 that is due to the client not being able to connect to the Xeno application. This issue is common for people using any bad VPNs, make sure we are able to access the local server @http://localhost:3110
 
+7. Issue: Xeno Attaches Successfully, but the Script Doesn't Run
 
+Cause: The specific script you are using is broken, patched, or incompatible, but Xeno itself is functioning correctly. Solution:
+
+Test Xeno using a verified working script to rule out executor failure.
+
+Copy and execute the following Infinite Yield loadstring: loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+
+If this script works and the menu opens, Xeno is working fine.
+
+The issue is with your previous script. Please find a new, updated script on ScriptBlox.
 
