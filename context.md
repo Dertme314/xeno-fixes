@@ -92,7 +92,7 @@ Use the mirror site (x3no.pages.dev) Or use a web proxy like Proxyium(proxyium.
 
 🔗 Useful Links
 
-Official Website: https://xeno.onlmirror site if that doesn’t work x3no.pages.dev
+Official Website: https://xeno.onl and https://xeno.now mirror site if those doesn’t work x3no.pages.dev
 
 Discord Support: https://discord.gg/xe-no
 
