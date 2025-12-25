@@ -88,7 +88,7 @@ Restart Xeno.
 Cause: ISP or Browser is blocking the download.
 Solution:
 
-Use the mirror site (x3no.pages.dev) Or use a web proxy like Proxyium(proxyium.com).
+Use the mirror site (x3no.pages.dev) Or use a web proxy like Proxyium(proxyium.com) sometimes vpn can also fix the site blocked error you can use protonvpn or cloudflare warp
 
 🔗 Useful Links
 
