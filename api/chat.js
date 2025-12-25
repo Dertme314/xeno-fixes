@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         model: "tngtech/deepseek-r1t2-chimera:free",
         messages: fullConversation,
         temperature: 0.7,
-        max_tokens: 500
+        max_tokens: 2000
       })
     });
 
