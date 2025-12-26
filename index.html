@@ -130,6 +130,40 @@
         .chat-scroll::-webkit-scrollbar-track { background: #111; }
         .chat-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
         .chat-scroll::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* IMAGE PREVIEW STYLES */
+        .image-preview-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #374151;
+            display: none; /* Hidden by default */
+        }
+        .image-preview-container img {
+            max-height: 80px;
+            width: auto;
+            display: block;
+        }
+        .remove-image-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .remove-image-btn:hover {
+            background: rgba(220, 38, 38, 0.9);
+        }
     </style>
 </head>
 <body class="p-4 md:p-10 min-h-screen">
@@ -552,11 +586,37 @@
             </div>
         </div>
 
-        <div class="p-3 bg-gray-800 border-t border-gray-700 flex-shrink-0">
-            <div class="flex items-center gap-2 bg-gray-900 border border-gray-600 rounded-full px-4 py-2 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 transition-all">
+        <div class="p-3 bg-gray-800 border-t border-gray-700 flex-shrink-0 flex flex-col">
+            
+            <!-- New: Image Preview Area -->
+            <div id="image-preview" class="image-preview-container self-start ml-2">
+                <img id="preview-img-elem" src="" alt="Preview">
+                <div class="remove-image-btn" onclick="clearImage()">×</div>
+            </div>
+        
+            <!-- New: Controls Bar (Model Select) -->
+            <div class="flex justify-between items-center mb-2 px-1">
+                <select id="model-selector" class="bg-gray-900 text-xs text-gray-400 border border-gray-700 rounded px-2 py-1 focus:outline-none focus:border-indigo-500">
+                    <option value="gemini">⚡ Fast + Vision (Gemini 2.0)</option>
+                    <option value="chimera">🧠 Deep Logic (Chimera R1)</option>
+                </select>
+                <span class="text-[10px] text-gray-600">v1.0 Connected</span>
+            </div>
+        
+            <!-- Input Bar -->
+            <div class="flex items-center gap-2 bg-gray-900 border border-gray-600 rounded-2xl px-4 py-2 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 transition-all">
+                
+                <!-- Attachment Button -->
+                <button onclick="document.getElementById('file-upload').click()" class="text-gray-400 hover:text-white transition-colors" title="Upload Image">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                </button>
+                <!-- Hidden File Input -->
+                <input type="file" id="file-upload" accept="image/*" class="hidden" onchange="handleImageSelect(this)">
+        
                 <input type="text" id="chat-input" autocomplete="off" placeholder="Type your issue..." class="flex-1 bg-transparent border-none text-white text-sm focus:outline-none placeholder-gray-500" onkeydown="handleEnter(event)">
+                
                 <button onclick="sendMessage()" class="text-indigo-500 hover:text-white transition-colors p-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></polygon></svg>
                 </button>
             </div>
         </div>
@@ -707,27 +767,98 @@
         if (e.key === 'Enter') sendMessage();
     }
 
-    // --- MAIN SEND FUNCTION ---
+    // ============================================
+    // NEW LOGIC: Image Handling & Dual Models
+    // ============================================
+
+    let currentBase64Image = null;
+
+    // 1. Handle Image Selection
+    function handleImageSelect(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                currentBase64Image = e.target.result; // Save Base64
+                // Show Preview
+                document.getElementById('preview-img-elem').src = currentBase64Image;
+                document.getElementById('image-preview').style.display = 'inline-block';
+            }
+            
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // 2. Clear Image
+    function clearImage() {
+        currentBase64Image = null;
+        document.getElementById('file-upload').value = "";
+        document.getElementById('image-preview').style.display = 'none';
+    }
+
+    // 3. UPDATED Send Message Function
     async function sendMessage() {
         const text = chatInput.value.trim();
-        if (!text) return;
+        const modelId = document.getElementById('model-selector').value;
 
-        // 1. Show User Message
-        addBubble(text, 'user');
+        // Validation: Don't send empty messages unless there is an image
+        if (!text && !currentBase64Image) return;
+
+        // GUARD RAIL: Prevent sending images to Chimera
+        if (modelId === 'chimera' && currentBase64Image) {
+            alert("⚠️ The 'Thinking' model cannot read images.\n\nPlease switch to 'Fast + Vision' or remove the image.");
+            return;
+        }
+
+        // UI: Clear Inputs immediately
         chatInput.value = '';
+        const tempImage = currentBase64Image; // Store for display
+        clearImage(); // Clear from state
 
-        // 2. Show Typing Indicator
+        // UI: Show User Message (With Image if exists)
+        let userDisplayHtml = text;
+        if (tempImage) {
+            userDisplayHtml += `<br><img src="${tempImage}" style="max-width:100%; border-radius:8px; margin-top:8px;">`;
+        }
+        addBubble(userDisplayHtml, 'user');
+
+        // UI: Show Typing
         const typingId = showTyping();
+
+        // CONSTRUCT MESSAGE FOR BACKEND
+        // Note: We only add the image for the current request context for simplicity in this frontend
+        let newMessageObj;
+
+        if (tempImage) {
+            newMessageObj = {
+                role: "user",
+                content: [
+                    { type: "text", text: text },
+                    { type: "image_url", image_url: { url: tempImage } }
+                ]
+            };
+        } else {
+            newMessageObj = { role: "user", content: text };
+        }
+
+        // Add to history (We convert object to simple text for history storage to prevent memory bloat in this demo, 
+        // but real apps might handle history differently. For now we append the object.)
+        // However, standard text-only history might break if we push objects. 
+        // For this demo, we push the object, but remember Chimera will fail if it sees previous image objects in history.
+        // SIMPLIFICATION: We push the current message to the payload, but might clean history if model switches.
         
-        // Add user message to history
-        conversationHistory.push({ role: "user", content: text });
+        const payloadMessages = [...conversationHistory, newMessageObj];
 
         try {
             // NOTE: Replace '/api/chat' with your actual backend URL if you have one.
             const response = await fetch('/api/chat', { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: conversationHistory })
+                body: JSON.stringify({ 
+                    messages: payloadMessages,
+                    modelId: modelId // Pass the selected model ID
+                })
             });
 
             if (!response.ok) throw new Error("API Error");
@@ -736,6 +867,7 @@
             const aiResponseText = data.choices ? data.choices[0].message.content : data.text; 
 
             // Add AI response to history
+            conversationHistory.push(newMessageObj); // Add user msg to permanent history
             conversationHistory.push({ role: "assistant", content: aiResponseText });
 
             removeTyping(typingId);
@@ -762,7 +894,8 @@
         const bubble = document.createElement('div');
         if (isUser) {
             bubble.className = "bg-indigo-600 text-white rounded-2xl rounded-tr-none px-4 py-2.5 text-sm max-w-[85%] shadow-md break-words";
-            bubble.textContent = text;
+            // Allow HTML for images
+            bubble.innerHTML = text; 
         } else {
             bubble.className = "bg-gray-800 text-gray-200 rounded-2xl rounded-tl-none px-4 py-3 text-sm max-w-[85%] border border-gray-700 shadow-sm break-words";
             // Use 'marked' for markdown if available, else plain text
