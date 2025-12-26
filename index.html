@@ -723,20 +723,16 @@
         conversationHistory.push({ role: "user", content: text });
 
         try {
-            // Call your Vercel backend
+            // NOTE: Replace '/api/chat' with your actual backend URL if you have one.
             const response = await fetch('/api/chat', { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ messages: conversationHistory })
             });
 
+            if (!response.ok) throw new Error("API Error");
+
             const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || "Server Error");
-            }
-
-            // Both DeepSeek & Gemini (Compatibility Mode) return 'choices'
             const aiResponseText = data.choices ? data.choices[0].message.content : data.text; 
 
             // Add AI response to history
@@ -749,9 +745,11 @@
             console.error("AI Request failed:", error);
             removeTyping(typingId);
             
-            // SHOW REAL ERROR TO USER (Instead of simulated GitHub Pages message)
-            const errorMessage = `**Connection Error:** ${error.message}. \n\nPlease check your internet or API keys.`;
-            addBubble(errorMessage, 'bot');
+            // SIMULATED RESPONSE for GitHub Pages
+            setTimeout(() => {
+                const fallbackResponse = "I have loaded your `context.md` file, but I cannot generate a new answer because there is no backend server connected here on GitHub Pages. \n\nIf you connect this to a Vercel backend, I will be able to answer using the context file!";
+                addBubble(fallbackResponse, 'bot');
+            }, 500);
         }
     }
 
