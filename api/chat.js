@@ -12,10 +12,14 @@ export default async function handler(req, res) {
 
   // Define Models
   const MODEL_MAP = {
-    "gemini": "google/gemini-2.0-flash-exp:free",      // Primary Fast + Vision (High Rate Limits)
-    "gemini_backup": "google/gemini-pro-1.5-exp:free",  // Backup (FREE, different rate limit pool)
-    "chimera": "tngtech/deepseek-r1t2-chimera:free",   // Thinking
+    "gemini": "google/gemini-2.0-flash-exp:free",           // 1. Primary (Fastest, Google)
+    "backup_1": "google/gemini-pro-1.5-exp:free",            // 2. Backup (Stable, Google)
+    "backup_2": "meta-llama/llama-3.2-11b-vision-instruct:free", // 3. Hail Mary (Meta - Different provider)
+    "chimera": "tngtech/deepseek-r1t2-chimera:free",         // Thinking Model
   };
+
+  // Helper for small delays (helps clear rate limits)
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   // Helper function to call OpenRouter
   async function callAI(modelTarget) {
@@ -46,21 +50,35 @@ export default async function handler(req, res) {
     let selectedModel = MODEL_MAP[modelId] || MODEL_MAP["gemini"];
     let result = await callAI(selectedModel);
 
-    // 2. ERROR HANDLING & RETRY LOGIC (FREE BACKUP)
-    // If we get a rate limit (429) or server error (5xx) AND we were using the primary Gemini
-    if (result.status !== 200 && modelId === 'gemini') {
-      console.warn(`Primary model failed with status ${result.status}. Switching to FREE backup...`);
+    // ============================================================
+    // ROBUST RETRY LOGIC (3 LAYERS)
+    // ============================================================
+    
+    // If Primary fails AND we are in "Gemini/Fast" mode (not explicitly using Chimera)
+    if (result.status !== 200 && modelId !== 'chimera') {
       
-      // Retry with the free backup model
-      result = await callAI(MODEL_MAP["gemini_backup"]);
+      // LAYER 2: Try Google Backup
+      console.warn(`Primary (${selectedModel}) failed (${result.status}). Waiting 1s then trying Backup 1...`);
+      await sleep(1000); // Wait for rate limit cooldown
+      
+      result = await callAI(MODEL_MAP["backup_1"]);
+
+      // LAYER 3: Try Meta Backup (Different Provider)
+      if (result.status !== 200) {
+        console.warn(`Backup 1 failed (${result.status}). Waiting 1s then trying Backup 2 (Llama)...`);
+        await sleep(1000);
+        
+        result = await callAI(MODEL_MAP["backup_2"]);
+      }
     }
 
-    // If it STILL fails, then we return the error
+    // ============================================================
+
+    // If it STILL fails after 3 tries, return the error
     if (result.status !== 200) {
-      console.error("Final AI Error:", result.data);
-      // Send the actual error back to frontend so you can see it in console
+      console.error("Final AI Error after retries:", result.data);
       return res.status(result.status).json({ 
-        error: result.data.error || "AI Busy/Rate Limited" 
+        error: result.data.error || "All free models are currently busy. Please try again in a moment." 
       });
     }
 
