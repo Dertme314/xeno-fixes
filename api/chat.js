@@ -13,7 +13,6 @@ export default async function handler(req, res) {
   // Define Models
   const MODEL_MAP = {
     "gemini": "google/gemini-2.0-flash-exp:free",      // Primary Fast + Vision
-    "gemini_backup": "google/gemini-flash-1.5-8b",      // Backup (Very cheap/stable)
     "chimera": "tngtech/deepseek-r1t2-chimera:free",   // Thinking
   };
 
@@ -46,17 +45,7 @@ export default async function handler(req, res) {
     let selectedModel = MODEL_MAP[modelId] || MODEL_MAP["gemini"];
     let result = await callAI(selectedModel);
 
-    // 2. ERROR HANDLING & RETRY LOGIC
-    // If we get a rate limit (429) or server error (5xx) AND we were using the free Gemini
-    if (result.status !== 200 && modelId === 'gemini') {
-      console.warn(`Primary model failed with status ${result.status}. Switching to backup...`);
-      
-      // Try the backup model
-      // Note: 1.5-8b is paid but extremmmely cheap (pennies for millions of tokens). 
-      // If you want strictly free, use "google/gemini-pro-1.5-exp:free"
-      result = await callAI("google/gemini-pro-1.5-exp:free");
-    }
-
+    // If we get an error, we simply fail (no backup/retry logic)
     if (result.status !== 200) {
       console.error("Final AI Error:", result.data);
       // Send the actual error back to frontend so you can see it in console
