@@ -3,13 +3,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  // 1. Get the model choice from the frontend (default to Gemini if missing)
-  const { messages, modelId } = req.body;
-
-  if (!Array.isArray(messages)) {
-    return res.status(400).json({ error: "Invalid message format." });
-  }
-
+  const { messages } = req.body;
   const apiKey = process.env.API_KEY;
 
   if (!apiKey) {
@@ -19,14 +13,8 @@ export default async function handler(req, res) {
     });
   }
 
-  // 2. Map user-friendly names to actual OpenRouter IDs
-  const MODEL_MAP = {
-    "gemini": "google/gemini-2.0-flash-exp:free",      // Fast + Vision
-    "chimera": "tngtech/deepseek-r1t2-chimera:free",    // Thinking / Deep Logic
-  };
-
-  // Select the model, defaulting to gemini if the ID is unknown or undefined
-  const selectedModel = MODEL_MAP[modelId] || MODEL_MAP["gemini"];
+  // FORCE CHIMERA (DeepSeek R1T2) - No other options
+  const selectedModel = "tngtech/deepseek-r1t2-chimera:free";
 
   try {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -54,7 +42,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Only return what the frontend actually needs
     return res.status(200).json({
       choices: data.choices
     });
