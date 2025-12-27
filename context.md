@@ -101,6 +101,8 @@
 2.  If using a VPN, check that it allows access to the local server at: http://localhost:3110
 3.  Try disabling the VPN temporarily to test the connection.
 
+10. Issue: No Client Found / Cannot Select Client
+Cause: UI rendering issue or process detection failure. Solution: 1.  Possible Fix (Not Universal): Redownload Xeno and specifically select the "Legacy" UI option during download. 2.  
 ---
 
 ## 🔗 Useful Links
